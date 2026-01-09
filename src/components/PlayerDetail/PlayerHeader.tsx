@@ -32,7 +32,7 @@ export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeader
   }
 
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center">
       {!isEditing ? (
         <h2
           onClick={() => setIsEditing(true)}

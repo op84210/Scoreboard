@@ -74,7 +74,7 @@ export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4">
+    <div className="bg-gray-800 rounded-lg p-2">
       <h3 className="text-white font-bold text-sm mb-4">得分明細</h3>
       <div className="flex justify-center">
         <div style={{ width: '100%', maxWidth: '300px' }}>

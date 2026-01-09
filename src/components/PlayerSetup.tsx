@@ -1,5 +1,3 @@
-import { Container } from './Container'
-
 // 玩家設定組件屬性
 interface PlayerSetupProps {
   onPlayerCountSelected: (count: number) => void
@@ -8,7 +6,7 @@ interface PlayerSetupProps {
 // 玩家設定組件
 export function PlayerSetup({ onPlayerCountSelected }: PlayerSetupProps) {
   return (
-    <Container>
+    <div className={`flex flex-col justify-center min-h-screen mx-auto text-center`}>
       <h2>選擇玩家人數</h2>
       <div>
         {[2, 3, 4, 5].map((count) => (
@@ -20,6 +18,6 @@ export function PlayerSetup({ onPlayerCountSelected }: PlayerSetupProps) {
           </button>
         ))}
       </div>
-    </Container>
+    </div>
   )
 }

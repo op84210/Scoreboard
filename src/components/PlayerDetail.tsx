@@ -70,6 +70,12 @@ export function PlayerDetail({ player, onClose, onAddScore, onUpdatePlayerName }
             >
               輸入分數
             </button>
+            <button
+              onClick={handleClose}
+              className="btn-gray w-full"
+            >
+              返回主畫面
+            </button>
           </div>
         )}
 
