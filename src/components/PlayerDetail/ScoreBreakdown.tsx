@@ -1,4 +1,15 @@
 import { type ScoreBreakdown as ScoreBreakdownType, type ScoreType, SCORE_TYPE_ICONS, SCORE_TYPE_LABELS } from '../../types'
+import { Pie } from 'react-chartjs-2'
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  type ChartOptions,
+} from 'chart.js'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.defaults.font.size = 16
 
 interface ScoreBreakdownProps {
   breakdown: ScoreBreakdownType
@@ -6,26 +17,69 @@ interface ScoreBreakdownProps {
 }
 
 export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
+  const scoreTypes = Object.keys(breakdown) as ScoreType[]
+  const scores = scoreTypes.map((type) => breakdown[type])
+  const labels = scoreTypes.map((type) => `${SCORE_TYPE_ICONS[type]} ${SCORE_TYPE_LABELS[type]}`)
+
+  // 色板定義
+  const colors = [
+    'rgb(239 68 68)',    // red
+    'rgb(59 130 246)',   // blue
+    'rgb(34 197 94)',    // green
+    'rgb(234 179 8)',    // yellow
+    'rgb(107 114 128)',  // gray
+  ]
+
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        data: scores,
+        backgroundColor: colors.slice(0, scoreTypes.length),
+        borderColor: 'rgb(31 41 55)', // gray-900
+        borderWidth: 2,
+      },
+    ],
+  }
+
+  const chartOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: 'white',
+          font: {
+            weight: 'bold',
+          },
+          padding: 18,
+        },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: 'white',
+        bodyColor: 'white',
+        padding: 12,
+        displayColors: true,
+        callbacks: {
+          label: (context) => {
+            const value = context.parsed
+            const percentage = totalScore > 0 ? ((value / totalScore) * 100).toFixed(1) : 0
+            return `${value} (${percentage}%)`
+          },
+        },
+      },
+    },
+  }
+
   return (
     <div className="bg-gray-800 rounded-lg p-4">
-      <h3 className="text-white font-bold text-sm">得分明細</h3>
-      <div className="space-y-2">
-        {(Object.keys(breakdown) as ScoreType[]).map((type) => {
-          const score = breakdown[type]
-          const percentage = totalScore > 0 ? (score / totalScore) * 100 : 0
-
-          return (
-            <div key={type} className="flex items-center justify-between flex-col">
-              <div className="flex items-center gap-2 w-full justify-between">
-                <span className="text-2xl">{SCORE_TYPE_ICONS[type]}</span>
-                <span className="text-white text-sm">{SCORE_TYPE_LABELS[type]}</span>
-                <span className="text-white font-bold text-sm w-12 text-right">
-                  {score}
-                </span>
-              </div>
-            </div>
-          )
-        })}
+      <h3 className="text-white font-bold text-sm mb-4">得分明細</h3>
+      <div className="flex justify-center">
+        <div style={{ width: '100%', maxWidth: '300px' }}>
+          <Pie data={chartData} options={chartOptions} />
+        </div>
       </div>
     </div>
   )
