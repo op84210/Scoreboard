@@ -38,6 +38,15 @@ function App() {
     setGameState('setup')
   }
 
+  // 處理玩家名稱更新
+  const handleUpdatePlayerName = (playerId: number, newName: string) => {
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player) =>
+        player.id === playerId ? { ...player, name: newName } : player,
+      ),
+    )
+  }
+
   // 處理新增得分
   const handleAddScore = (playerId: number, points: number, scoreType: ScoreType) => {
     // 更新玩家得分資料
@@ -78,10 +87,17 @@ function App() {
   return (
     <>
       {gameState === 'setup' && (
-        <PlayerSetup onPlayerCountSelected={handlePlayerCountSelected} />
+        <PlayerSetup
+          onPlayerCountSelected={handlePlayerCountSelected}
+        />
       )}
       {gameState === 'playing' && (
-        <Scoreboard players={players} onReset={handleReset} onAddScore={handleAddScore} />
+        <Scoreboard
+          players={players}
+          onReset={handleReset}
+          onAddScore={handleAddScore}
+          onUpdatePlayerName={handleUpdatePlayerName}
+        />
       )}
     </>
   )

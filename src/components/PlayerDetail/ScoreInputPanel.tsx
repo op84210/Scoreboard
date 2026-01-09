@@ -1,17 +1,30 @@
 import { useState } from 'react'
 
 interface ScoreInputPanelProps {
-  onQuickScore: (points: number) => void
-  onCustomScore: (points: number) => void
+  onConfirmScore: (points: number) => void
+  confirmDisabled?: boolean
 }
 
-export function ScoreInputPanel({ onQuickScore, onCustomScore }: ScoreInputPanelProps) {
+export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: ScoreInputPanelProps) {
   const [customScore, setCustomScore] = useState('')
 
-  const handleCustomScore = () => {
+  // 快速按鈕：僅累加到輸入框，不立即提交
+  const handleAdjustScore = (delta: number) => {
+    const base = parseInt(customScore)
+    const current = isNaN(base) ? 0 : base
+    const next = current + delta
+    if (next < 0) {
+      setCustomScore('0')
+      return
+    }
+    setCustomScore(String(next))
+  }
+
+  // 確定：提交輸入框的值
+  const handleConfirm = () => {
     const points = parseInt(customScore)
     if (!isNaN(points) && points !== 0) {
-      onCustomScore(points)
+      onConfirmScore(points)
       setCustomScore('')
     }
   }
@@ -19,25 +32,20 @@ export function ScoreInputPanel({ onQuickScore, onCustomScore }: ScoreInputPanel
   return (
     <>
       {/* 快速加分按鈕 */}
-      <div className="grid grid-cols-4 gap-2 mb-4">
-        {[1, 2, 3, 5, 10, -1, -2, -5].map((points) => (
+      <div className="grid grid-cols-4 gap-2">
+        {[1, 3, 5, 10, -1, -3, -5, -10].map((points) => (
           <button
             key={points}
-            onClick={() => onQuickScore(points)}
-            className={`${
-              points > 0
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-red-600 hover:bg-red-700'
-            } text-white font-bold py-3 rounded-lg transition`}
+            onClick={() => handleAdjustScore(points)}
+            className={points > 0 ? 'btn-score-positive' : 'btn-score-negative'}
           >
-            {points > 0 ? '+' : ''}
-            {points}
+            {points > 0 ? '+' + points : points}
           </button>
         ))}
       </div>
 
       {/* 自定義得分輸入 */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-col sm:flex-row">
         <input
           type="number"
           value={customScore}
@@ -46,13 +54,14 @@ export function ScoreInputPanel({ onQuickScore, onCustomScore }: ScoreInputPanel
           className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              handleCustomScore()
+              handleConfirm()
             }
           }}
         />
         <button
-          onClick={handleCustomScore}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition"
+          onClick={handleConfirm}
+          disabled={confirmDisabled}
+          className="btn-confirm"
         >
           確定
         </button>

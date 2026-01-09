@@ -7,10 +7,15 @@ interface ScoreboardProps {
     players: Player[]
     onReset: () => void
     onAddScore: (playerId: number, points: number, scoreType: ScoreType) => void
+    onUpdatePlayerName: (playerId: number, newName: string) => void
 }
 
-export function Scoreboard({ players, onReset, onAddScore }: ScoreboardProps) {
-    const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
+export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName }: ScoreboardProps) {
+    const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
+
+    const selectedPlayer = selectedPlayerId
+        ? players.find((p) => p.id === selectedPlayerId) ?? null
+        : null
 
     return (
         <Container>
@@ -29,10 +34,13 @@ export function Scoreboard({ players, onReset, onAddScore }: ScoreboardProps) {
                     return (
                         <button
                             key={p.id}
-                            onClick={() => setSelectedPlayer(p)}
+                            onClick={() => setSelectedPlayerId(p.id)}
                             className={`w-full rounded-lg p-4 ${colorClass}`}
                         >
-                            {p.name}
+                            <div className="flex items-center justify-between w-full">
+                                <span>{p.name}</span>
+                                <span className="font-bold">{p.score}</span>
+                            </div>
                         </button>
                     )
                 })}
@@ -42,8 +50,9 @@ export function Scoreboard({ players, onReset, onAddScore }: ScoreboardProps) {
             {selectedPlayer && (
                 <PlayerDetail
                     player={selectedPlayer}
-                    onClose={() => setSelectedPlayer(null)}
+                    onClose={() => setSelectedPlayerId(null)}
                     onAddScore={onAddScore}
+                    onUpdatePlayerName={onUpdatePlayerName}
                 />
             )}
         </Container>
