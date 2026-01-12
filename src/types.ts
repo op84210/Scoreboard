@@ -33,10 +33,7 @@ export interface Player {
 }
 
 // 遊戲狀態
-export type GameState = 'setup' | 'playing'
-
-// 可用玩家顏色
-export const PLAYER_COLORS: PlayerColor[] = ['red', 'blue', 'green', 'yellow', 'black']
+export type GameState = 'setup' | 'color-selection' | 'playing'
 
 // 得分類型標籤與圖示
 export const SCORE_TYPE_LABELS: Record<ScoreType, string> = {

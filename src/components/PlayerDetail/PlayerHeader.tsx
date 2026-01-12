@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 interface PlayerHeaderProps {
   playerName: string
@@ -7,10 +7,15 @@ interface PlayerHeaderProps {
 }
 
 export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeaderProps) {
+  
+  // 編輯名稱狀態
   const [isEditing, setIsEditing] = useState(false)
+
+  // 編輯中的名稱狀態
   const [editName, setEditName] = useState(playerName)
 
-  const handleSaveName = () => {
+  // 處理儲存名稱變更
+  const handleSaveName = useCallback(() => {
     const trimmedName = editName.trim()
     if (trimmedName !== '' && trimmedName !== playerName) {
       onNameChange?.(trimmedName)
@@ -19,9 +24,10 @@ export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeader
       setEditName(playerName)
     }
     setIsEditing(false)
-  }
+  }, [editName, onNameChange, playerName])
 
-  const handleKeyDown = (key: string) => {
+  // 處理鍵盤事件
+  const handleKeyDown = useCallback((key: string) => {
     if (key === 'Enter') {
       handleSaveName()
     }
@@ -29,7 +35,7 @@ export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeader
       setEditName(playerName)
       setIsEditing(false)
     }
-  }
+  }, [handleSaveName, playerName])
 
   return (
     <div className="flex justify-between items-center">

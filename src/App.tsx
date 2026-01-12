@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import './App.css'
-import { type Player, type GameState, PLAYER_COLORS, type ScoreBreakdown, type ScoreRecord, type ScoreType, } from './types'
+import { type Player, type GameState, type ScoreBreakdown, type ScoreRecord, type ScoreType, type PlayerColor } from './types'
+import { PLAYER_COLORS } from './constants/colors'
 import { PlayerSetup } from './components/PlayerSetup'
+import { ColorSelection } from './components/ColorSelection'
 import { Scoreboard } from './components/Scoreboard'
 
 function App() {
@@ -9,6 +11,7 @@ function App() {
   // 遊戲狀態與玩家資料
   const [gameState, setGameState] = useState<GameState>('setup')
   const [players, setPlayers] = useState<Player[]>([])
+  const [playerCount, setPlayerCount] = useState(0)
 
   // 建立空的得分類別
   const createEmptyBreakdown = (): ScoreBreakdown => ({
@@ -19,36 +22,57 @@ function App() {
     field: 0,
   })
 
+  // 建立新玩家資料
+  const createNewPlayer = (id: number, color: PlayerColor): Player => ({
+    id,
+    name: `玩家 ${id}`,
+    score: 0,
+    color,
+    scoreBreakdown: createEmptyBreakdown(),
+    scoreHistory: [] as ScoreRecord[],
+  })
+
   // 處理玩家人數選擇
-  const handlePlayerCountSelected = (count: number) => {
-    const newPlayers: Player[] = Array.from({ length: count }, (_, i) => ({
-      id: i + 1,
-      name: `玩家 ${i + 1}`,
-      score: 0,
-      color: PLAYER_COLORS[i],
-      scoreBreakdown: createEmptyBreakdown(),
-      scoreHistory: [] as ScoreRecord[],
-    }))
+  const handlePlayerCountSelected = useCallback((count: number) => {
+    setPlayerCount(count)
+
+    // 如果選擇 5 人，直接使用所有顏色並進入遊戲
+    if (count === 5) {
+      const allColors = Object.keys(PLAYER_COLORS) as PlayerColor[]
+      const newPlayers: Player[] = allColors.map((color, i) => createNewPlayer(i + 1, color))
+      setPlayers(newPlayers)
+      setGameState('playing')
+    } else {
+      // 其他人數需要選擇顏色
+      setGameState('color-selection')
+    }
+  }, [createNewPlayer])
+
+  // 處理顏色選擇完成
+  const handleColorsSelected = useCallback((selectedColors: PlayerColor[]) => {
+    const newPlayers: Player[] = selectedColors.map((color, i) => createNewPlayer(i + 1, color))
     setPlayers(newPlayers)
     setGameState('playing')
-  }
+  }, [createNewPlayer])
 
   // 處理重設遊戲
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setGameState('setup')
-  }
+    setPlayerCount(0)
+    setPlayers([])
+  }, [])
 
   // 處理玩家名稱更新
-  const handleUpdatePlayerName = (playerId: number, newName: string) => {
+  const handleUpdatePlayerName = useCallback((playerId: number, newName: string) => {
     setPlayers((prevPlayers) =>
       prevPlayers.map((player) =>
         player.id === playerId ? { ...player, name: newName } : player,
       ),
     )
-  }
+  }, [])
 
   // 處理新增得分
-  const handleAddScore = (playerId: number, points: number, scoreType: ScoreType) => {
+  const handleAddScore = useCallback((playerId: number, points: number, scoreType: ScoreType) => {
     // 更新玩家得分資料
     setPlayers((prevPlayers) =>
       // 更新目標玩家的得分資料
@@ -82,7 +106,13 @@ function App() {
         }
       }),
     )
-  }
+  }, [])
+
+  // 處理返回設置頁面
+  const handleBackToSetup = useCallback(() => {
+    setGameState('setup')
+    setPlayerCount(0)
+  }, [])
 
   return (
     <>
@@ -91,6 +121,15 @@ function App() {
           onPlayerCountSelected={handlePlayerCountSelected}
         />
       )}
+
+      {gameState === 'color-selection' && (
+        <ColorSelection
+          playerCount={playerCount}
+          onColorsSelected={handleColorsSelected}
+          onBack={handleBackToSetup}
+        />
+      )}
+
       {gameState === 'playing' && (
         <Scoreboard
           players={players}

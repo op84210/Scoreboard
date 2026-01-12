@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 interface ScoreInputPanelProps {
   onConfirmScore: (points: number) => void
@@ -6,10 +6,11 @@ interface ScoreInputPanelProps {
 }
 
 export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: ScoreInputPanelProps) {
+  // 自定義分數輸入狀態
   const [customScore, setCustomScore] = useState('')
 
   // 快速按鈕：僅累加到輸入框，不立即提交
-  const handleAdjustScore = (delta: number) => {
+  const handleAdjustScore = useCallback((delta: number) => {
     const base = parseInt(customScore)
     const current = isNaN(base) ? 0 : base
     const next = current + delta
@@ -18,16 +19,16 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
       return
     }
     setCustomScore(String(next))
-  }
+  }, [customScore])
 
   // 確定：提交輸入框的值
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     const points = parseInt(customScore)
     if (!isNaN(points) && points !== 0) {
       onConfirmScore(points)
       setCustomScore('')
     }
-  }
+  }, [customScore, onConfirmScore])
 
   return (
     <>

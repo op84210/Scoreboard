@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { type Player, type ScoreType } from '../types'
 import { PlayerDetail } from './PlayerDetail'
 import { Bar } from 'react-chartjs-2'
+import { PLAYER_COLORS } from '../constants/colors'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -16,6 +17,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 ChartJS.defaults.font.size = 20
 
+// 計分板元件屬性
 interface ScoreboardProps {
     players: Player[]
     onReset: () => void
@@ -23,30 +25,28 @@ interface ScoreboardProps {
     onUpdatePlayerName: (playerId: number, newName: string) => void
 }
 
-const PLAYER_CHART_COLORS: Record<string, string> = {
-    red: 'rgb(220 38 38)',
-    blue: 'rgb(59 130 246)',
-    green: 'rgb(34 197 94)',
-    yellow: 'rgb(234 179 8)',
-    black: 'rgb(107 114 128)',
-}
-
 export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName }: ScoreboardProps) {
+    
+    // 被選中的玩家 ID 狀態
     const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
+    // 控制是否顯示重設確認彈窗
     const [showResetConfirm, setShowResetConfirm] = useState(false)
 
+    // 找出被選中的玩家
     const selectedPlayer = selectedPlayerId
         ? players.find((p) => p.id === selectedPlayerId) ?? null
         : null
 
-    const handleResetClick = () => {
+    // 處理重設按鈕點擊
+    const handleResetClick = useCallback(() => {
         setShowResetConfirm(true)
-    }
+    }, [])
 
-    const handleConfirmReset = () => {
+    // 確認重設遊戲
+    const handleConfirmReset = useCallback(() => {
         setShowResetConfirm(false)
         onReset()
-    }
+    }, [onReset])
 
     // 準備長條圖資料
     const chartData = {
@@ -55,13 +55,14 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName }:
             {
                 label: '總分',
                 data: players.map((p) => p.score),
-                backgroundColor: players.map((p) => PLAYER_CHART_COLORS[p.color] || 'rgb(107 114 128)'),
+                backgroundColor: players.map((p) => PLAYER_COLORS[p.color] || 'rgb(107 114 128)'),
                 borderColor: 'rgb(255 255 255)',
                 borderWidth: 2,
             },
         ],
     }
 
+    // 長條圖選項
     const chartOptions: ChartOptions<'bar'> = {
         indexAxis: 'y',  // 設定為水平排放
         responsive: true,
