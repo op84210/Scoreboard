@@ -23,10 +23,11 @@ interface ScoreboardProps {
     onReset: () => void
     onAddScore: (playerId: number, points: number, scoreType: ScoreType) => void
     onUpdatePlayerName: (playerId: number, newName: string) => void
+    onShowHistory: () => void
 }
 
-export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName }: ScoreboardProps) {
-    
+export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, onShowHistory }: ScoreboardProps) {
+
     // 被選中的玩家 ID 狀態
     const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
     // 控制是否顯示重設確認彈窗
@@ -125,7 +126,7 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName }:
                     ↻
                 </button>
                 <button
-                    // onClick={}
+                    onClick={onShowHistory}
                     className="rounded-lg p-2 m-1 text-white bg-gray-600 text-2xl"
                     title="紀錄"
                 >
@@ -182,7 +183,7 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName }:
                             >
                                 確認重設
                             </button>
-                               <button
+                            <button
                                 onClick={() => setShowResetConfirm(false)}
                                 className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition"
                             >

@@ -1,3 +1,6 @@
+// 玩家顏色
+export type PlayerColor = keyof typeof PLAYER_COLORS
+
 export const PLAYER_COLORS = {
   red: 'rgb(220 38 38)',
   blue: 'rgb(59 130 246)',
@@ -14,4 +17,3 @@ export const PLAYER_BG_COLORS: Record<string, string> = {
   black: 'rgb(23 23 23)',     // neutral-900
 }
 
-export type PlayerColor = keyof typeof PLAYER_COLORS

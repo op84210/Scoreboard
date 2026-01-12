@@ -1,3 +1,5 @@
+import type { PlayerColor } from "./constants/colors"
+
 // 得分類型
 export type ScoreType = 'castle' | 'road' | 'monastery' | 'garden' | 'field'
 
@@ -19,8 +21,6 @@ export interface ScoreRecord {
   description?: string
 }
 
-// 玩家顏色
-export type PlayerColor = 'red' | 'blue' | 'green' | 'yellow' | 'black'
 
 // 玩家資料
 export interface Player {
@@ -33,7 +33,7 @@ export interface Player {
 }
 
 // 遊戲狀態
-export type GameState = 'setup' | 'color-selection' | 'playing'
+export type GameState = 'setup' | 'color-selection' | 'playing' | 'history'
 
 // 得分類型標籤與圖示
 export const SCORE_TYPE_LABELS: Record<ScoreType, string> = {

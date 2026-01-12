@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react'
 import './App.css'
-import { type Player, type GameState, type ScoreBreakdown, type ScoreRecord, type ScoreType, type PlayerColor } from './types'
-import { PLAYER_COLORS } from './constants/colors'
+import { type Player, type GameState, type ScoreBreakdown, type ScoreRecord, type ScoreType } from './types'
+import { PLAYER_COLORS, type PlayerColor } from './constants/colors'
 import { PlayerSetup } from './components/PlayerSetup'
 import { ColorSelection } from './components/ColorSelection'
 import { Scoreboard } from './components/Scoreboard'
+import { GameHistory } from './components/GameHistory'
 
 function App() {
 
@@ -34,7 +35,7 @@ function App() {
 
   // 處理玩家人數選擇
   const handlePlayerCountSelected = useCallback((count: number) => {
-    setPlayerCount(count)
+    setPlayerCount(count)// 設定玩家人數
 
     // 如果選擇 5 人，直接使用所有顏色並進入遊戲
     if (count === 5) {
@@ -73,10 +74,11 @@ function App() {
 
   // 處理新增得分
   const handleAddScore = useCallback((playerId: number, points: number, scoreType: ScoreType) => {
+
     // 更新玩家得分資料
     setPlayers((prevPlayers) =>
-      // 更新目標玩家的得分資料
       prevPlayers.map((player) => {
+
         // 非目標玩家不變更
         if (player.id !== playerId)
           return player
@@ -114,6 +116,16 @@ function App() {
     setPlayerCount(0)
   }, [])
 
+  // 處理顯示歷史記錄
+  const handleShowHistory = useCallback(() => {
+    setGameState('history')
+  }, [])
+
+  // 處理從歷史記錄返回
+  const handleBackFromHistory = useCallback(() => {
+    setGameState('playing')
+  }, [])
+
   return (
     <>
       {gameState === 'setup' && (
@@ -136,6 +148,14 @@ function App() {
           onReset={handleReset}
           onAddScore={handleAddScore}
           onUpdatePlayerName={handleUpdatePlayerName}
+          onShowHistory={handleShowHistory}
+        />
+      )}
+
+      {gameState === 'history' && (
+        <GameHistory
+          players={players}
+          onBack={handleBackFromHistory}
         />
       )}
     </>

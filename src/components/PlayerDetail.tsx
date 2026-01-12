@@ -15,7 +15,9 @@ interface PlayerDetailProps {
   onUpdatePlayerName?: (playerId: number, newName: string) => void
 }
 
+// 玩家細節元件
 export function PlayerDetail({ player, onClose, onAddScore, onUpdatePlayerName }: PlayerDetailProps) {
+
   // 選擇的得分類型狀態
   const [selectedScoreType, setSelectedScoreType] = useState<ScoreType | null>(null)
   // 控制是否顯示分數輸入面板
