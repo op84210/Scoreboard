@@ -16,6 +16,7 @@ interface ScoreBreakdownProps {
   totalScore: number
 }
 
+// 得分明細元件
 export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
   const scoreTypes = Object.keys(breakdown) as ScoreType[]
   const scores = scoreTypes.map((type) => breakdown[type])
@@ -77,7 +78,7 @@ export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
     <div className="bg-gray-800 rounded-lg p-2">
       <h3 className="text-white font-bold text-sm mb-4">得分明細</h3>
       <div className="flex justify-center">
-        <div style={{ width: '100%', maxWidth: '300px' }}>
+        <div style={{ width: '100%', maxWidth: '400px' }}>
           <Pie data={chartData} options={chartOptions} />
         </div>
       </div>

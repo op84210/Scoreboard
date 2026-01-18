@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { type Player, type ScoreType } from '../types'
 import { PlayerDetail } from './PlayerDetail'
+import { ScoreInputModal } from './ScoreInputModal'
 import { Bar } from 'react-chartjs-2'
 import { PLAYER_COLORS } from '../constants/colors'
 import {
@@ -28,14 +29,21 @@ interface ScoreboardProps {
 
 export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, onShowHistory }: ScoreboardProps) {
 
-    // 被選中的玩家 ID 狀態
+    // 被選中的玩家 ID 狀態（用於查看明細）
     const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
+    // 被選中的玩家 ID 狀態（用於輸入分數）
+    const [inputPlayerId, setInputPlayerId] = useState<number | null>(null)
     // 控制是否顯示重設確認彈窗
     const [showResetConfirm, setShowResetConfirm] = useState(false)
 
-    // 找出被選中的玩家
+    // 找出被選中的玩家（查看明細）
     const selectedPlayer = selectedPlayerId
         ? players.find((p) => p.id === selectedPlayerId) ?? null
+        : null
+
+    // 找出被選中的玩家（輸入分數）
+    const inputPlayer = inputPlayerId
+        ? players.find((p) => p.id === inputPlayerId) ?? null
         : null
 
     // 處理重設按鈕點擊
@@ -146,16 +154,25 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
                 {players.map((p) => {
                     const colorClass = `btn-${p.color}`
                     return (
-                        <button
-                            key={p.id}
-                            onClick={() => setSelectedPlayerId(p.id)}
-                            className={`w-full rounded-lg p-1 ${colorClass}`}
-                        >
-                            <div className="flex items-center justify-between w-full">
-                                <span>{p.name}</span>
-                                <span className="font-bold">{p.score}</span>
-                            </div>
-                        </button>
+                        <div key={p.id} className="flex gap-2">
+                            <button
+                                onClick={() => setSelectedPlayerId(p.id)}
+                                className={`flex-1 rounded-lg p-1 ${colorClass}`}
+                                title="查看明細"
+                            >
+                                <div className="flex items-center justify-between w-full">
+                                    <span>{p.name}</span>
+                                    <span className="font-bold">{p.score}</span>
+                                </div>
+                            </button>
+                            <button
+                                onClick={() => setInputPlayerId(p.id)}
+                                className="rounded-lg p-3 bg-green-600 hover:bg-green-500 text-white text-xl transition"
+                                title="輸入分數"
+                            >
+                                ➕
+                            </button>
+                        </div>
                     )
                 })}
             </ul>
@@ -165,7 +182,6 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
                 <PlayerDetail
                     player={selectedPlayer}
                     onClose={() => setSelectedPlayerId(null)}
-                    onAddScore={onAddScore}
                     onUpdatePlayerName={onUpdatePlayerName}
                 />
             )}
@@ -192,6 +208,15 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* 分數輸入彈窗 */}
+            {inputPlayer && (
+                <ScoreInputModal
+                    player={inputPlayer}
+                    onClose={() => setInputPlayerId(null)}
+                    onAddScore={onAddScore}
+                />
             )}
         </div>
     )
