@@ -104,8 +104,8 @@ function App() {
     setPlayerCount(count)// 設定玩家人數
     setEndgameApplied(false)
 
-    // 如果選擇 5 人，直接使用所有顏色並進入遊戲
-    if (count === 5) {
+    // 如果選擇 6 人，直接使用所有顏色並進入遊戲
+    if (count === 6) {
       const allColors = Object.keys(PLAYER_COLORS) as PlayerColor[]
       const newPlayers: Player[] = allColors.map((color, i) => createNewPlayer(i + 1, color))
       setPlayers(newPlayers)

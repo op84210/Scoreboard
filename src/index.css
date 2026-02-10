@@ -152,6 +152,20 @@ button {
   background-color: rgb(36, 36, 36);
 }
 
+.btn-pink {
+  color: white;
+  background-color: rgb(236 72 153);
+  transition: background-color 0.2s;
+}
+
+.btn-pink:hover {
+  background-color: rgb(219 39 119);
+}
+
+.btn-pink:active {
+  background-color: rgb(190 24 93);
+}
+
 /* 加分按鈕樣式 */
 .btn-score-positive {
   background-color: rgb(34 197 94);
