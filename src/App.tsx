@@ -33,6 +33,20 @@ const normalizeBonusBreakdown = (breakdown?: Partial<BonusBreakdown>): BonusBrea
 const calculateTotalScore = (breakdown: ScoreBreakdown, endgameBonus: number): number =>
   Object.values(breakdown).reduce((sum, s) => sum + s, 0) + endgameBonus
 
+const findLatestRecord = (players: Player[]): { playerId: number; record: ScoreRecord } | null => {
+  let latest: { playerId: number; record: ScoreRecord } | null = null
+
+  for (const player of players) {
+    for (const record of player.scoreHistory) {
+      if (!latest || record.timestamp >= latest.record.timestamp) {
+        latest = { playerId: player.id, record }
+      }
+    }
+  }
+
+  return latest
+}
+
 const loadStoredState = (): StoredState | null => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -208,6 +222,66 @@ function App() {
     )
   }, [])
 
+  // 刪除最新得分紀錄
+  const handleDeleteLatestRecord = useCallback(() => {
+    let nextEndgameApplied = false
+
+    setPlayers((prevPlayers) => {
+      const latest = findLatestRecord(prevPlayers)
+
+      if (!latest) {
+        nextEndgameApplied = prevPlayers.some((player) =>
+          player.scoreHistory.some((record) => record.recordType === 'endgame'),
+        )
+        return prevPlayers
+      }
+
+      const { playerId, record } = latest
+
+      const nextPlayers = prevPlayers.map((player) => {
+        if (player.id !== playerId) return player
+
+        const nextHistory = player.scoreHistory.filter((item) => item.id !== record.id)
+        let nextScoreBreakdown = player.scoreBreakdown
+        let nextBonusBreakdown = player.bonusBreakdown
+        let nextEndgameBonus = player.endgameBonus
+
+        if (record.recordType === 'score') {
+          nextScoreBreakdown = {
+            ...player.scoreBreakdown,
+            [record.scoreType]: Math.max(0, player.scoreBreakdown[record.scoreType] - record.points),
+          }
+        } else if (record.recordType === 'bonus') {
+          nextBonusBreakdown = {
+            ...player.bonusBreakdown,
+            [record.bonusType]: Math.max(0, player.bonusBreakdown[record.bonusType] - record.points),
+          }
+        } else {
+          nextEndgameBonus = Math.max(0, player.endgameBonus - record.points)
+        }
+
+        const newScore = calculateTotalScore(nextScoreBreakdown, nextEndgameBonus)
+
+        return {
+          ...player,
+          score: newScore,
+          scoreBreakdown: nextScoreBreakdown,
+          bonusBreakdown: nextBonusBreakdown,
+          endgameBonus: nextEndgameBonus,
+          scoreHistory: nextHistory,
+        }
+      })
+
+      nextEndgameApplied = nextPlayers.some((player) =>
+        player.scoreHistory.some((record) => record.recordType === 'endgame'),
+      )
+
+      return nextPlayers
+    })
+
+    setEndgameApplied(nextEndgameApplied)
+  }, [])
+
   // 終局結算：酒桶、麥穗、布匹各自最高者 +10
   const handleApplyEndgameBonus = useCallback(() => {
     if (endgameApplied) return
@@ -320,6 +394,7 @@ function App() {
         <GameHistory
           players={players}
           onBack={handleBackFromHistory}
+          onDeleteLatest={handleDeleteLatestRecord}
         />
       )}
     </>

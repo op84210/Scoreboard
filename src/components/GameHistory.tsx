@@ -1,12 +1,16 @@
+import { useState } from 'react'
 import { type Player, type ScoreRecord, BONUS_TYPE_ICONS, BONUS_TYPE_LABELS, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../types'
 import { PLAYER_COLORS } from '../constants/colors'
 
 interface GameHistoryProps {
     players: Player[]
     onBack: () => void
+    onDeleteLatest: () => void
 }
 
-export function GameHistory({ players, onBack }: GameHistoryProps) {
+export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProps) {
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
     const getRecordDisplay = (record: ScoreRecord) => {
         if (record.recordType === 'score') {
             return {
@@ -37,6 +41,7 @@ export function GameHistory({ players, onBack }: GameHistoryProps) {
 
     // 按時間倒序排列（最新的在最上面）
     allRecords.sort((a, b) => b.timestamp - a.timestamp)
+    const hasRecords = allRecords.length > 0
 
     return (
         <div className="min-h-screen bg-gray-900 p-4 rounded-lg">
@@ -44,12 +49,21 @@ export function GameHistory({ players, onBack }: GameHistoryProps) {
                 {/* 標題列 */}
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-2xl font-bold text-white">得分記錄</h2>
-                    <button
-                        onClick={onBack}
-                        className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition"
-                    >
-                        返回
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            disabled={!hasRecords}
+                            className={`px-4 py-2 rounded-lg transition text-white ${hasRecords ? 'bg-red-600 hover:bg-red-500' : 'bg-gray-700 cursor-not-allowed opacity-60'}`}
+                        >
+                            刪除最新
+                        </button>
+                        <button
+                            onClick={onBack}
+                            className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition"
+                        >
+                            返回
+                        </button>
+                    </div>
                 </div>
 
                 {/* 記錄列表 */}
@@ -112,6 +126,33 @@ export function GameHistory({ players, onBack }: GameHistoryProps) {
                     </div>
                 )}
             </div>
+
+            {/* 刪除最新確認彈窗 */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 bg-white/25 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 rounded-lg p-6 max-w-sm mx-4">
+                        <h3 className="text-white text-lg font-bold mb-4">刪除最新記錄？</h3>
+                        <p className="text-gray-300 mb-6">此操作無法撤銷，將刪除最新一筆得分記錄。</p>
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowDeleteConfirm(false)
+                                    onDeleteLatest()
+                                }}
+                                className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                            >
+                                確認刪除
+                            </button>
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                            >
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
