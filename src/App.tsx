@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import './App.css'
 import { type Player, type GameState, type ScoreBreakdown, type ScoreRecord, type ScoreType } from './types'
 import { PLAYER_COLORS, type PlayerColor } from './constants/colors'
@@ -7,12 +7,34 @@ import { ColorSelection } from './components/ColorSelection'
 import { Scoreboard } from './components/Scoreboard'
 import { GameHistory } from './components/GameHistory'
 
+const STORAGE_KEY = 'scoreboard-state-v1'
+
+type StoredState = {
+  gameState: GameState
+  players: Player[]
+  playerCount: number
+}
+
+const loadStoredState = (): StoredState | null => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as StoredState
+    if (!parsed || !Array.isArray(parsed.players)) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
 function App() {
 
+  const storedState = loadStoredState()
+
   // 遊戲狀態與玩家資料
-  const [gameState, setGameState] = useState<GameState>('setup')
-  const [players, setPlayers] = useState<Player[]>([])
-  const [playerCount, setPlayerCount] = useState(0)
+  const [gameState, setGameState] = useState<GameState>(storedState?.gameState ?? 'setup')
+  const [players, setPlayers] = useState<Player[]>(storedState?.players ?? [])
+  const [playerCount, setPlayerCount] = useState(storedState?.playerCount ?? 0)
 
   // 建立空的得分類別
   const createEmptyBreakdown = (): ScoreBreakdown => ({
@@ -125,6 +147,15 @@ function App() {
   const handleBackFromHistory = useCallback(() => {
     setGameState('playing')
   }, [])
+
+  useEffect(() => {
+    const nextState: StoredState = {
+      gameState,
+      players,
+      playerCount,
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState))
+  }, [gameState, players, playerCount])
 
   return (
     <>
