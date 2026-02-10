@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { type TouchEvent, useRef, useState } from 'react'
 import { type Player, type ScoreRecord, BONUS_TYPE_ICONS, BONUS_TYPE_LABELS, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../types'
 import { PLAYER_COLORS } from '../constants/colors'
 
@@ -9,7 +9,9 @@ interface GameHistoryProps {
 }
 
 export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProps) {
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [activeSwipeId, setActiveSwipeId] = useState<string | null>(null)
+    const [swipeOffset, setSwipeOffset] = useState(0)
+    const touchStartX = useRef<number | null>(null)
 
     const getRecordDisplay = (record: ScoreRecord) => {
         if (record.recordType === 'score') {
@@ -42,21 +44,41 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
     // 按時間倒序排列（最新的在最上面）
     allRecords.sort((a, b) => b.timestamp - a.timestamp)
     const hasRecords = allRecords.length > 0
+    const latestRecordId = hasRecords ? allRecords[0].id : null
+    const swipeThreshold = 80
+
+    const handleTouchStart = (recordId: string) => (event: TouchEvent<HTMLDivElement>) => {
+        if (recordId !== latestRecordId) return
+        touchStartX.current = event.touches[0]?.clientX ?? null
+        setActiveSwipeId(recordId)
+        setSwipeOffset(0)
+    }
+
+    const handleTouchMove = (recordId: string) => (event: TouchEvent<HTMLDivElement>) => {
+        if (recordId !== latestRecordId) return
+        if (touchStartX.current === null) return
+        const currentX = event.touches[0]?.clientX ?? touchStartX.current
+        setSwipeOffset(currentX - touchStartX.current)
+    }
+
+    const handleTouchEnd = (recordId: string) => () => {
+        if (recordId !== latestRecordId) return
+        const shouldDelete = Math.abs(swipeOffset) >= swipeThreshold
+        setSwipeOffset(0)
+        setActiveSwipeId(null)
+        touchStartX.current = null
+        if (shouldDelete) {
+            onDeleteLatest()
+        }
+    }
 
     return (
         <div className="min-h-screen bg-gray-900 p-4 rounded-lg">
             <div className="max-w-2xl mx-auto">
                 {/* 標題列 */}
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-white">得分記錄</h2>
+                    <h2 className="text-2xl font-bold text-white">記錄</h2>
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setShowDeleteConfirm(true)}
-                            disabled={!hasRecords}
-                            className={`px-4 py-2 rounded-lg transition text-white ${hasRecords ? 'bg-red-600 hover:bg-red-500' : 'bg-gray-700 cursor-not-allowed opacity-60'}`}
-                        >
-                            刪除最新
-                        </button>
                         <button
                             onClick={onBack}
                             className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition"
@@ -65,6 +87,9 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                         </button>
                     </div>
                 </div>
+                {hasRecords && (
+                    <div className="text-xs text-gray-400 mb-2">提示：左右滑動最新一筆可刪除</div>
+                )}
 
                 {/* 記錄列表 */}
                 {allRecords.length === 0 ? (
@@ -83,13 +108,29 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                             const seconds = date.getSeconds().toString().padStart(2, '0')
                             const timeString = `${hours}:${minutes}:${seconds}`
 
+                            const isLatest = record.id === latestRecordId
+                            const isActive = activeSwipeId === record.id
+                            const offsetX = isActive ? swipeOffset : 0
+
                             return (
                                 <div
                                     key={record.id}
-                                    className="bg-gray-800 rounded-lg p-2 flex items-center justify-between"
+                                    className={`bg-gray-800 rounded-lg p-2 flex items-center justify-between transition-transform relative ${isLatest ? 'touch-pan-y' : ''}`}
                                     // 邊框顏色使用玩家顏色
-                                    style={{ borderLeft: `15px solid ${record.playerColor}` }}
+                                    style={{
+                                        borderLeft: `15px solid ${record.playerColor}`,
+                                        transform: `translateX(${offsetX}px)`,
+                                    }}
+                                    onTouchStart={handleTouchStart(record.id)}
+                                    onTouchMove={handleTouchMove(record.id)}
+                                    onTouchEnd={handleTouchEnd(record.id)}
+                                    onTouchCancel={handleTouchEnd(record.id)}
+                                    aria-label={isLatest ? '滑動刪除最新記錄' : undefined}
                                 >
+                                    <div
+                                        className="absolute inset-0 rounded-lg pointer-events-none"
+                                        style={{ background: 'transparent' }}
+                                    />
                                     {/* 左側：玩家信息 */}
                                     <div className="flex items-center gap-3">
                                         <div>
@@ -120,39 +161,21 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                                             {record.points > 0 ? '+' : ''}{record.points}
                                         </div>
                                     </div>
+
+                                    {isLatest && (
+                                        <div
+                                            className="absolute right-3 text-xs text-red-300"
+                                            style={{ opacity: Math.min(Math.abs(offsetX) / swipeThreshold, 1) }}
+                                        >
+                                            刪除
+                                        </div>
+                                    )}
                                 </div>
                             )
                         })}
                     </div>
                 )}
             </div>
-
-            {/* 刪除最新確認彈窗 */}
-            {showDeleteConfirm && (
-                <div className="fixed inset-0 bg-white/25 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 rounded-lg p-6 max-w-sm mx-4">
-                        <h3 className="text-white text-lg font-bold mb-4">刪除最新記錄？</h3>
-                        <p className="text-gray-300 mb-6">此操作無法撤銷，將刪除最新一筆得分記錄。</p>
-                        <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() => {
-                                    setShowDeleteConfirm(false)
-                                    onDeleteLatest()
-                                }}
-                                className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition"
-                            >
-                                確認刪除
-                            </button>
-                            <button
-                                onClick={() => setShowDeleteConfirm(false)}
-                                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition"
-                            >
-                                取消
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
