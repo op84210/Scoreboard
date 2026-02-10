@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { type Player, type ScoreType } from '../types'
+import { type Player } from '../types'
 import { PlayerHeader } from './PlayerDetail/PlayerHeader'
 import { PlayerScore } from './PlayerDetail/PlayerScore'
 import { ScoreBreakdown } from './PlayerDetail/ScoreBreakdown'

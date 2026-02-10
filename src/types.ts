@@ -1,5 +1,7 @@
 import type { PlayerColor } from "./constants/colors"
 
+export type { PlayerColor }
+
 // 得分類型
 export type ScoreType = 'castle' | 'road' | 'monastery' | 'garden' | 'field'
 
