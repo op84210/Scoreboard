@@ -1,4 +1,15 @@
 import { useState, useCallback } from 'react'
+import clsx from 'clsx'
+import { layoutStyles } from '../styles'
+
+const styles = {
+  quickGrid: 'grid grid-cols-4 gap-2',
+  positiveButton: 'btn-score-positive',
+  negativeButton: 'btn-score-negative',
+  inputRow: layoutStyles.inputRow,
+  input: 'flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+  confirmButton: 'btn-confirm',
+}
 
 interface ScoreInputPanelProps {
   onConfirmScore: (points: number) => void
@@ -33,12 +44,12 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
   return (
     <>
       {/* 快速加分按鈕 */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className={styles.quickGrid}>
         {[1, 3, 5, 10, -1, -3, -5, -10].map((points) => (
           <button
             key={points}
             onClick={() => handleAdjustScore(points)}
-            className={points > 0 ? 'btn-score-positive' : 'btn-score-negative'}
+            className={clsx(points > 0 ? styles.positiveButton : styles.negativeButton)}
           >
             {points > 0 ? '+' + points : points}
           </button>
@@ -46,13 +57,13 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
       </div>
 
       {/* 自定義得分輸入 */}
-      <div className="flex gap-2 flex-col sm:flex-row">
+      <div className={styles.inputRow}>
         <input
           type="number"
           value={customScore}
           onChange={(e) => setCustomScore(e.target.value)}
           placeholder="輸入分數"
-          className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={styles.input}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleConfirm()
@@ -62,7 +73,7 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
         <button
           onClick={handleConfirm}
           disabled={confirmDisabled}
-          className="btn-confirm"
+          className={styles.confirmButton}
         >
           確定
         </button>

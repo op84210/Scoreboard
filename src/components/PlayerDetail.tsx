@@ -1,10 +1,17 @@
 import { useState, useCallback } from 'react'
+import clsx from 'clsx'
 import { type Player } from '../types'
 import { PlayerHeader } from './PlayerDetail/PlayerHeader'
 import { PlayerScore } from './PlayerDetail/PlayerScore'
 import { ScoreBreakdown } from './PlayerDetail/ScoreBreakdown'
 import { BonusBreakdown } from './PlayerDetail/BonusBreakdown'
 import { PLAYER_BG_COLORS } from '../constants/colors'
+import { sheetStyles } from './styles'
+
+const styles = {
+  content: 'flex flex-col justify-evenly h-full animate-fade-in',
+  returnButton: 'btn-gray w-full',
+}
 
 // 玩家細節元件屬性
 interface PlayerDetailProps {
@@ -31,18 +38,20 @@ export function PlayerDetail({ player, onClose, onUpdatePlayerName }: PlayerDeta
 
   return (
     <div
-      className="fixed inset-0 bg-opacity-75 flex items-end justify-center z-50"
+      className={sheetStyles.overlay}
       onClick={handleClose}
     >
       {/* 點擊背景關閉 */}
       <div
-        className={`bg-gray-900 rounded-t-3xl p-4 w-full h-full max-w-md overflow-y-auto 
-          ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}
+        className={clsx(
+          sheetStyles.panel,
+          isClosing ? sheetStyles.panelClose : sheetStyles.panelOpen,
+        )}
         style={{ backgroundColor: bgColor }}
         onClick={(e) => e.stopPropagation()}
       >
 
-        <div className="flex flex-col justify-evenly h-full animate-fade-in">
+        <div className={styles.content}>
           <PlayerHeader
             playerName={player.name}
             onClose={handleClose}
@@ -53,7 +62,7 @@ export function PlayerDetail({ player, onClose, onUpdatePlayerName }: PlayerDeta
           <BonusBreakdown breakdown={player.bonusBreakdown} />
           <button
             onClick={handleClose}
-            className="btn-gray w-full"
+            className={styles.returnButton}
           >
             返回主畫面
           </button>

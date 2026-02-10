@@ -1,3 +1,11 @@
+import clsx from 'clsx'
+import { buttonStyles, layoutStyles } from './styles'
+
+const styles = {
+  container: layoutStyles.centerPage,
+  button: 'm-2',
+}
+
 // 玩家設定組件屬性
 interface PlayerSetupProps {
   onPlayerCountSelected: (count: number) => void
@@ -6,11 +14,12 @@ interface PlayerSetupProps {
 // 玩家設定組件
 export function PlayerSetup({ onPlayerCountSelected }: PlayerSetupProps) {
   return (
-    <div className={`flex flex-col justify-center min-h-screen mx-auto text-center`}>
+    <div className={styles.container}>
       <h2>選擇玩家人數</h2>
       <div>
         {[2, 3, 4, 5, 6].map((count) => (
-          <button className="m-2 rounded-lg bg-blue-600 px-4 py-2 text-white"
+          <button
+            className={clsx(buttonStyles.primary, styles.button)}
             key={count}
             onClick={() => onPlayerCountSelected(count)}
           >

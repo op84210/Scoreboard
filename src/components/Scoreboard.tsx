@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react'
+import clsx from 'clsx'
 import { type BonusType, type Player, type ScoreType } from '../types'
 import { PlayerDetail } from './PlayerDetail'
 import { ScoreInputModal } from './ScoreInputModal'
 import { Bar } from 'react-chartjs-2'
 import { PLAYER_COLORS } from '../constants/colors'
+import { buttonStyles, cardStyles, layoutStyles, modalStyles, textStyles } from './styles'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -17,6 +19,25 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 ChartJS.defaults.font.size = 20
+
+const styles = {
+    container: 'mx-auto space-y-2',
+    topBar: layoutStyles.rowEnd,
+    iconButton: buttonStyles.iconBase,
+    iconButtonGray: buttonStyles.iconGray,
+    iconButtonAmber: buttonStyles.iconAmber,
+    iconButtonDisabled: buttonStyles.iconDisabled,
+    chartCard: cardStyles.sectionMd,
+    playerList: layoutStyles.listY2,
+    playerRow: layoutStyles.rowGap2,
+    playerButton: 'flex-1 rounded-lg p-3',
+    playerScoreRow: layoutStyles.rowBetween,
+    playerScoreValue: textStyles.bold,
+    addScoreButton: buttonStyles.addScore,
+    modalPrimaryRed: modalStyles.primaryRed,
+    modalPrimaryAmber: modalStyles.primaryAmber,
+    modalSecondary: modalStyles.secondary,
+}
 
 // 計分板元件屬性
 interface ScoreboardProps {
@@ -141,18 +162,21 @@ export function Scoreboard({ players, onReset, onAddScore, onAddBonus, onUpdateP
     }
 
     return (
-        <div className={`mx-auto space-y-2`}>
-            <div className="flex justify-end items-center">
+        <div className={styles.container}>
+            <div className={styles.topBar}>
                 <button
                     onClick={handleResetClick}
-                    className="rounded-lg p-2 m-1 text-white bg-gray-600 text-2xl"
+                    className={clsx(styles.iconButton, styles.iconButtonGray)}
                     title="重設一局"
                 >
                     ↻
                 </button>
                 <button
                     onClick={handleEndgameClick}
-                    className={`rounded-lg p-2 m-1 text-white text-2xl ${endgameApplied ? 'bg-gray-500 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-500'}`}
+                    className={clsx(
+                        styles.iconButton,
+                        endgameApplied ? styles.iconButtonDisabled : styles.iconButtonAmber,
+                    )}
                     title={endgameApplied ? '已結算終局' : '終局結算'}
                     disabled={endgameApplied}
                 >
@@ -160,7 +184,7 @@ export function Scoreboard({ players, onReset, onAddScore, onAddBonus, onUpdateP
                 </button>
                 <button
                     onClick={onShowHistory}
-                    className="rounded-lg p-2 m-1 text-white bg-gray-600 text-2xl"
+                    className={clsx(styles.iconButton, styles.iconButtonGray)}
                     title="紀錄"
                 >
                     📜
@@ -168,31 +192,31 @@ export function Scoreboard({ players, onReset, onAddScore, onAddBonus, onUpdateP
             </div>
 
             {/* 長條圖 */}
-            <div className="bg-gray-800 rounded-lg p-4">
+            <div className={styles.chartCard}>
                 <div style={{ height: '250px' }}>
                     <Bar data={chartData} options={chartOptions} />
                 </div>
             </div>
 
             {/* 玩家列表 */}
-            <ul className="space-y-2">
+            <ul className={styles.playerList}>
                 {players.map((p) => {
                     const colorClass = `btn-${p.color}`
                     return (
-                        <div key={p.id} className="flex gap-2">
+                        <div key={p.id} className={styles.playerRow}>
                             <button
                                 onClick={() => setSelectedPlayerId(p.id)}
-                                className={`flex-1 rounded-lg p-1 ${colorClass}`}
+                                className={clsx(styles.playerButton, colorClass)}
                                 title="查看明細"
                             >
-                                <div className="flex items-center justify-between w-full">
+                                <div className={styles.playerScoreRow}>
                                     <span>{p.name}</span>
-                                    <span className="font-bold">{p.score}</span>
+                                    <span className={styles.playerScoreValue}>{p.score}</span>
                                 </div>
                             </button>
                             <button
                                 onClick={() => setInputPlayerId(p.id)}
-                                className="rounded-lg p-3 bg-gray-800 hover:bg-green-500 text-white text-xl transition"
+                                className={styles.addScoreButton}
                                 title="輸入分數"
                             >
                                 ➕
@@ -213,20 +237,20 @@ export function Scoreboard({ players, onReset, onAddScore, onAddBonus, onUpdateP
 
             {/* 重設確認彈窗 */}
             {showResetConfirm && (
-                <div className="fixed inset-0 bg-white/25 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 rounded-lg p-6 max-w-sm mx-4">
-                        <h3 className="text-white text-lg font-bold mb-4">確認重設？</h3>
-                        <p className="text-gray-300 mb-6">所有玩家的分數將被清除，此操作無法撤銷。</p>
-                        <div className="flex flex-col gap-3">
+                <div className={modalStyles.overlay}>
+                    <div className={modalStyles.modal}>
+                        <h3 className={modalStyles.title}>確認重設？</h3>
+                        <p className={modalStyles.body}>所有玩家的分數將被清除，此操作無法撤銷。</p>
+                        <div className={modalStyles.actions}>
                             <button
                                 onClick={handleConfirmReset}
-                                className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                                className={styles.modalPrimaryRed}
                             >
                                 確認重設
                             </button>
                             <button
                                 onClick={() => setShowResetConfirm(false)}
-                                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                                className={styles.modalSecondary}
                             >
                                 取消
                             </button>
@@ -237,20 +261,20 @@ export function Scoreboard({ players, onReset, onAddScore, onAddBonus, onUpdateP
 
             {/* 終局結算確認彈窗 */}
             {showEndgameConfirm && (
-                <div className="fixed inset-0 bg-white/25 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 rounded-lg p-6 max-w-sm mx-4">
-                        <h3 className="text-white text-lg font-bold mb-4">確認終局結算？</h3>
-                        <p className="text-gray-300 mb-6">將為酒桶、麥穗、布匹最高者加 10 分，此操作無法撤銷。</p>
-                        <div className="flex flex-col gap-3">
+                <div className={modalStyles.overlay}>
+                    <div className={modalStyles.modal}>
+                        <h3 className={modalStyles.title}>確認終局結算？</h3>
+                        <p className={modalStyles.body}>將為酒桶、麥穗、布匹最高者加 10 分，此操作無法撤銷。</p>
+                        <div className={modalStyles.actions}>
                             <button
                                 onClick={handleConfirmEndgame}
-                                className="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                                className={styles.modalPrimaryAmber}
                             >
                                 確認結算
                             </button>
                             <button
                                 onClick={() => setShowEndgameConfirm(false)}
-                                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                                className={styles.modalSecondary}
                             >
                                 取消
                             </button>

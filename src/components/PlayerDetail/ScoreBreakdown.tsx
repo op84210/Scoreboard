@@ -1,4 +1,5 @@
 import { type ScoreBreakdown as ScoreBreakdownType, type ScoreType, SCORE_TYPE_ICONS, SCORE_TYPE_LABELS } from '../../types'
+import { cardStyles, layoutStyles, textStyles } from '../styles'
 import { Pie } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -10,6 +11,12 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 ChartJS.defaults.font.size = 16
+
+const styles = {
+  card: cardStyles.sectionSm,
+  title: textStyles.titleSm,
+  chartRow: layoutStyles.rowCenter,
+}
 
 interface ScoreBreakdownProps {
   breakdown: ScoreBreakdownType
@@ -78,9 +85,9 @@ export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg p-2">
-      <h3 className="text-white font-bold text-sm mb-4">得分明細</h3>
-      <div className="flex justify-center">
+    <div className={styles.card}>
+      <h3 className={styles.title}>得分明細</h3>
+      <div className={styles.chartRow}>
         <div style={{ width: '100%', maxWidth: '400px' }}>
           <Pie data={chartData} options={chartOptions} />
         </div>

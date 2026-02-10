@@ -1,9 +1,18 @@
 import { useState, useCallback } from 'react'
+import clsx from 'clsx'
 import { type BonusType, type Player, type ScoreType } from '../types'
 import { ScoreTypeSelector } from './PlayerDetail/ScoreTypeSelector'
 import { BonusTypeSelector } from './PlayerDetail/BonusTypeSelector'
 import { ScoreInputPanel } from './PlayerDetail/ScoreInputPanel'
 import { PLAYER_BG_COLORS } from '../constants/colors'
+import { buttonStyles, sheetStyles, textStyles } from './styles'
+
+const styles = {
+  header: 'flex justify-between items-center',
+  title: textStyles.titleLg,
+  closeButton: buttonStyles.closeIcon,
+  returnButton: 'btn-gray w-full',
+}
 
 // 分數輸入彈窗元件屬性
 interface ScoreInputModalProps {
@@ -47,23 +56,25 @@ export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: Sco
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-end justify-center z-50"
+      className={sheetStyles.overlay}
       onClick={handleClose}
     >
       {/* 點擊背景關閉 */}
       <div
-        className={`bg-gray-900 rounded-t-3xl p-4 w-full h-full max-w-md overflow-y-auto 
-          ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}
+        className={clsx(
+          sheetStyles.panel,
+          isClosing ? sheetStyles.panelClose : sheetStyles.panelOpen,
+        )}
         style={{ backgroundColor: bgColor }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex flex-col space-y-6 animate-fade-in">
+        <div className={sheetStyles.content}>
           {/* 玩家名稱標題 */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-white text-2xl font-bold">輸入分數</h2>
+          <div className={styles.header}>
+            <h2 className={styles.title}>輸入分數</h2>
             <button
               onClick={handleClose}
-              className="text-white text-3xl hover:text-gray-300 transition"
+              className={styles.closeButton}
             >
               ×
             </button>
@@ -89,7 +100,7 @@ export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: Sco
           />
           <button
             onClick={handleClose}
-            className="btn-gray w-full"
+            className={styles.returnButton}
           >
             返回
           </button>

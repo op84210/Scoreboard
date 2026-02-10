@@ -1,6 +1,18 @@
 import { useState, useCallback } from 'react'
+import clsx from 'clsx'
 import { type PlayerColor } from '../types'
 import { PLAYER_COLORS } from '../constants/colors'
+import { buttonStyles, layoutStyles } from './styles'
+
+const styles = {
+    container: layoutStyles.centerPage,
+    grid: layoutStyles.grid2Gap4,
+    colorButton: 'p-4 rounded-lg font-semibold transition-all',
+    colorButtonSelected: 'ring-4 ring-offset-2 ring-gray-400 scale-105',
+    colorButtonUnselected: 'opacity-70 hover:opacity-100',
+    checkmark: 'text-white drop-shadow',
+    buttonMargin: 'm-2',
+}
 
 // 顏色選擇元件屬性
 interface ColorSelectionProps {
@@ -29,27 +41,29 @@ export function ColorSelection({ playerCount, onColorsSelected, onBack }: ColorS
     const isComplete = selectedColors.length === playerCount
 
     return (
-        <div className={`flex flex-col justify-center min-h-screen mx-auto text-center`}>
+        <div className={styles.container}>
             <h2>選擇玩家顏色</h2>
             <p>
                 請為 {playerCount} 位玩家選擇顏色
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className={styles.grid}>
                 {availableColors.map((color) => (
                     <button
                         key={color}
                         onClick={() => handleColorSelect(color)}
-                        className={`p-4 rounded-lg font-semibold transition-all ${selectedColors.includes(color)
-                                ? 'ring-4 ring-offset-2 ring-gray-400 scale-105'
-                                : 'opacity-70 hover:opacity-100'
-                            }`}
+                        className={clsx(
+                            styles.colorButton,
+                            selectedColors.includes(color)
+                                ? styles.colorButtonSelected
+                                : styles.colorButtonUnselected,
+                        )}
                         style={{
                             backgroundColor: PLAYER_COLORS[color],
                         }}
                     >
                         {selectedColors.includes(color) && (
-                            <span className="text-white drop-shadow">✓</span>
+                            <span className={styles.checkmark}>✓</span>
                         )}
                     </button>
                 ))}
@@ -62,13 +76,13 @@ export function ColorSelection({ playerCount, onColorsSelected, onBack }: ColorS
             <button
                 onClick={() => onColorsSelected(selectedColors)}
                 disabled={!isComplete}
-                className="m-2 rounded-lg bg-blue-600 px-4 py-2 text-white"
+                className={clsx(buttonStyles.primary, styles.buttonMargin)}
             >
                 開始遊戲
             </button>
             <button
                 onClick={onBack}
-                className="m-2 rounded-lg bg-gray-600 px-4 py-2 text-white"
+                className={clsx(buttonStyles.secondary, styles.buttonMargin)}
             >
                 返回
             </button>

@@ -1,6 +1,33 @@
 import { type TouchEvent, useRef, useState } from 'react'
+import clsx from 'clsx'
 import { type Player, type ScoreRecord, BONUS_TYPE_ICONS, BONUS_TYPE_LABELS, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../types'
 import { PLAYER_COLORS } from '../constants/colors'
+import { buttonStyles, cardStyles, layoutStyles, pageStyles, textStyles } from './styles'
+
+const styles = {
+    container: pageStyles.container,
+    content: pageStyles.content,
+    header: layoutStyles.rowBetween,
+    title: textStyles.titleLg,
+    actions: 'flex items-center gap-2',
+    backButton: buttonStyles.closeIcon,
+    hint: textStyles.mutedSm,
+    empty: clsx('text-center py-8', textStyles.muted),
+    list: layoutStyles.listY2,
+    recordItem: clsx(cardStyles.listItem, layoutStyles.rowBetween, 'transition-transform relative'),
+    recordItemLatest: 'touch-pan-y',
+    infoRow: layoutStyles.rowGap2,
+    playerName: 'text-white font-semibold',
+    time: textStyles.labelSm,
+    scoreInfo: 'text-right',
+    scoreLabel: textStyles.labelSm,
+    scoreDesc: textStyles.mutedSm,
+    scoreValue: textStyles.valueLg,
+    scorePositive: textStyles.statusPositive,
+    scoreNegative: textStyles.statusNegative,
+    swipeOverlay: 'absolute inset-0 rounded-lg pointer-events-none',
+    swipeHint: clsx('absolute right-3 text-xs', textStyles.statusDangerHint),
+}
 
 interface GameHistoryProps {
     players: Player[]
@@ -73,31 +100,31 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
     }
 
     return (
-        <div className="min-h-screen bg-gray-900 p-4 rounded-lg">
-            <div className="max-w-2xl mx-auto">
+        <div className={styles.container}>
+            <div className={styles.content}>
                 {/* 標題列 */}
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-white">記錄</h2>
-                    <div className="flex items-center gap-2">
+                <div className={styles.header}>
+                    <h2 className={styles.title}>記錄</h2>
+                    <div className={styles.actions}>
                         <button
                             onClick={onBack}
-                            className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition"
+                            className={styles.backButton}
                         >
-                            返回
+                            ×
                         </button>
                     </div>
                 </div>
                 {hasRecords && (
-                    <div className="text-xs text-gray-400 mb-2">提示：左右滑動最新一筆可刪除</div>
+                    <div className={styles.hint}>左右滑動最新一筆可刪除</div>
                 )}
 
                 {/* 記錄列表 */}
                 {allRecords.length === 0 ? (
-                    <div className="text-center text-gray-400 py-8">
+                    <div className={styles.empty}>
                         目前沒有任何得分記錄
                     </div>
                 ) : (
-                    <div className="space-y-2">
+                    <div className={styles.list}>
                         {allRecords.map((record) => {
                             const date = new Date(record.timestamp)
                             const display = getRecordDisplay(record)
@@ -115,7 +142,7 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                             return (
                                 <div
                                     key={record.id}
-                                    className={`bg-gray-800 rounded-lg p-2 flex items-center justify-between transition-transform relative ${isLatest ? 'touch-pan-y' : ''}`}
+                                    className={clsx(styles.recordItem, isLatest && styles.recordItemLatest)}
                                     // 邊框顏色使用玩家顏色
                                     style={{
                                         borderLeft: `15px solid ${record.playerColor}`,
@@ -128,43 +155,46 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                                     aria-label={isLatest ? '滑動刪除最新記錄' : undefined}
                                 >
                                     <div
-                                        className="absolute inset-0 rounded-lg pointer-events-none"
+                                        className={styles.swipeOverlay}
                                         style={{ background: 'transparent' }}
                                     />
                                     {/* 左側：玩家信息 */}
-                                    <div className="flex items-center gap-3">
+                                    <div className={styles.infoRow}>
                                         <div>
-                                            <div className="text-white font-semibold">
+                                            <div className={styles.playerName}>
                                                 {record.playerName}
                                             </div>
-                                            <div className="text-white text-sm">
+                                            <div className={styles.time}>
                                                 {timeString}
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* 右側：得分信息 */}
-                                    <div className="text-right">
-                                        <div className="text-white text-sm">
+                                    <div className={styles.scoreInfo}>
+                                        <div className={styles.scoreLabel}>
                                             {display.label}
                                         </div>
-                                        {record.description && (
-                                            <div className="text-gray-300 text-xs">
+                                        {record.description ? (
+                                            <div className={styles.scoreDesc}>
                                                 {record.description}
                                             </div>
+                                        ) : (
+                                            <div
+                                                className={clsx(
+                                                    styles.scoreValue,
+                                                    record.points > 0 ? styles.scorePositive : styles.scoreNegative,
+                                                )}
+                                            >
+                                                {display.icon}
+                                                {record.points > 0 ? '+' : ''}{record.points}
+                                            </div>
                                         )}
-                                        <div
-                                            className={`font-bold text-lg ${record.points > 0 ? 'text-green-400' : 'text-red-400'
-                                                }`}
-                                        >
-                                            {display.icon}
-                                            {record.points > 0 ? '+' : ''}{record.points}
-                                        </div>
                                     </div>
 
                                     {isLatest && (
                                         <div
-                                            className="absolute right-3 text-xs text-red-300"
+                                            className={styles.swipeHint}
                                             style={{ opacity: Math.min(Math.abs(offsetX) / swipeThreshold, 1) }}
                                         >
                                         </div>
