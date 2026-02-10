@@ -7,7 +7,7 @@ interface PlayerHeaderProps {
 }
 
 export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeaderProps) {
-  
+
   // 編輯名稱狀態
   const [isEditing, setIsEditing] = useState(false)
 
@@ -49,17 +49,15 @@ export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeader
             {playerName}
             <span className="text-base">✏️</span>
           </h2>
-          <span className="text-xs text-gray-300">點擊名稱可編輯</span>
         </div>
       ) : (
-        <div className="flex gap-2 flex-1 items-center bg-gray-900/70 border border-blue-500/60 rounded-lg px-2 py-1">
-          <span className="text-xs text-blue-300 font-semibold">編輯中</span>
+        <div className="flex gap-2 flex-1">
           <input
             type="text"
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
             onBlur={handleSaveName}
-            className="flex-1 min-w-0 bg-transparent text-white px-2 py-1 focus:outline-none"
+            className="w-24 bg-gray-800 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             autoFocus
             onKeyDown={(e) => handleKeyDown(e.key)}
           />
