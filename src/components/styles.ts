@@ -4,8 +4,7 @@ export const modalStyles = {
   title: 'text-white text-lg font-bold mb-4',
   body: 'text-gray-300 mb-6',
   actions: 'flex flex-col gap-3',
-  primaryRed: 'flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition',
-  primaryAmber: 'flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-lg transition',
+  primary: 'flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition',
   secondary: 'flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition',
 } as const
 
