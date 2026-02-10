@@ -167,7 +167,6 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                                             className="absolute right-3 text-xs text-red-300"
                                             style={{ opacity: Math.min(Math.abs(offsetX) / swipeThreshold, 1) }}
                                         >
-                                            刪除
                                         </div>
                                     )}
                                 </div>
