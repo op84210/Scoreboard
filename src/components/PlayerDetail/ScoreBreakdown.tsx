@@ -29,6 +29,9 @@ export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
     'rgb(34 197 94)',    // green
     'rgb(234 179 8)',    // yellow
     'rgb(107 114 128)',  // gray
+    'rgb(236 72 153)',   // pink
+    'rgb(168 85 247)',   // purple
+    'rgb(20 184 166)',   // teal
   ]
 
   const chartData = {

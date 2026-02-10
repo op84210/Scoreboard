@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import { type Player, type ScoreType } from '../types'
+import { type BonusType, type Player, type ScoreType } from '../types'
 import { ScoreTypeSelector } from './PlayerDetail/ScoreTypeSelector'
+import { BonusTypeSelector } from './PlayerDetail/BonusTypeSelector'
 import { ScoreInputPanel } from './PlayerDetail/ScoreInputPanel'
 import { PLAYER_BG_COLORS } from '../constants/colors'
 
@@ -9,23 +10,31 @@ interface ScoreInputModalProps {
   player: Player
   onClose: () => void
   onAddScore: (playerId: number, points: number, scoreType: ScoreType) => void
+  onAddBonus: (playerId: number, points: number, bonusType: BonusType) => void
 }
 
 // 分數輸入彈窗元件
-export function ScoreInputModal({ player, onClose, onAddScore }: ScoreInputModalProps) {
+export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: ScoreInputModalProps) {
   // 選擇的得分類型狀態
   const [selectedScoreType, setSelectedScoreType] = useState<ScoreType | null>(null)
+  // 選擇的獎勵類型狀態
+  const [selectedBonusType, setSelectedBonusType] = useState<BonusType | null>(null)
   // 控制關閉動畫
   const [isClosing, setIsClosing] = useState(false)
 
   // 處理確認分數輸入
   const handleConfirmScore = useCallback((points: number) => {
-    if (selectedScoreType === null) {
+    if (selectedScoreType === null && selectedBonusType === null) {
       return
     }
-    onAddScore(player.id, points, selectedScoreType)
+    if (selectedScoreType !== null) {
+      onAddScore(player.id, points, selectedScoreType)
+    }
+    if (selectedBonusType !== null) {
+      onAddBonus(player.id, points, selectedBonusType)
+    }
     handleClose() // 直接關閉彈窗返回主畫面
-  }, [onAddScore, player.id, selectedScoreType])
+  }, [onAddBonus, onAddScore, player.id, selectedBonusType, selectedScoreType])
 
   // 處理關閉彈窗
   const handleClose = useCallback(() => {
@@ -62,11 +71,21 @@ export function ScoreInputModal({ player, onClose, onAddScore }: ScoreInputModal
 
           <ScoreTypeSelector
             selectedScoreType={selectedScoreType}
-            onSelectScoreType={(type) => setSelectedScoreType(type)}
+            onSelectScoreType={(type) => {
+              setSelectedScoreType(type)
+              setSelectedBonusType(null)
+            }}
+          />
+          <BonusTypeSelector
+            selectedBonusType={selectedBonusType}
+            onSelectBonusType={(type) => {
+              setSelectedBonusType(type)
+              setSelectedScoreType(null)
+            }}
           />
           <ScoreInputPanel
             onConfirmScore={handleConfirmScore}
-            confirmDisabled={selectedScoreType === null}
+            confirmDisabled={selectedScoreType === null && selectedBonusType === null}
           />
           <button
             onClick={handleClose}

@@ -1,4 +1,4 @@
-import { type Player, type ScoreRecord, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../types'
+import { type Player, type ScoreRecord, BONUS_TYPE_ICONS, BONUS_TYPE_LABELS, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../types'
 import { PLAYER_COLORS } from '../constants/colors'
 
 interface GameHistoryProps {
@@ -7,6 +7,20 @@ interface GameHistoryProps {
 }
 
 export function GameHistory({ players, onBack }: GameHistoryProps) {
+    const getRecordDisplay = (record: ScoreRecord) => {
+        if (record.recordType === 'score') {
+            return {
+                label: SCORE_TYPE_LABELS[record.scoreType],
+                icon: SCORE_TYPE_ICONS[record.scoreType],
+            }
+        }
+
+        return {
+            label: BONUS_TYPE_LABELS[record.bonusType],
+            icon: BONUS_TYPE_ICONS[record.bonusType],
+        }
+    }
+
     // 將所有玩家的記錄合併並按時間排序
     const allRecords: Array<ScoreRecord & { playerId: number; playerName: string; playerColor: string }> = []
 
@@ -47,6 +61,7 @@ export function GameHistory({ players, onBack }: GameHistoryProps) {
                     <div className="space-y-2">
                         {allRecords.map((record) => {
                             const date = new Date(record.timestamp)
+                            const display = getRecordDisplay(record)
 
                             // 格式化時間為 HH:MM:SS
                             const hours = date.getHours().toString().padStart(2, '0')
@@ -76,13 +91,18 @@ export function GameHistory({ players, onBack }: GameHistoryProps) {
                                     {/* 右側：得分信息 */}
                                     <div className="text-right">
                                         <div className="text-white text-sm">
-                                            {SCORE_TYPE_LABELS[record.scoreType]}
+                                            {display.label}
                                         </div>
+                                        {record.description && (
+                                            <div className="text-gray-300 text-xs">
+                                                {record.description}
+                                            </div>
+                                        )}
                                         <div
                                             className={`font-bold text-lg ${record.points > 0 ? 'text-green-400' : 'text-red-400'
                                                 }`}
                                         >
-                                            {SCORE_TYPE_ICONS[record.scoreType]}
+                                            {display.icon}
                                             {record.points > 0 ? '+' : ''}{record.points}
                                         </div>
                                     </div>

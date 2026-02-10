@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { type Player, type ScoreType } from '../types'
+import { type BonusType, type Player, type ScoreType } from '../types'
 import { PlayerDetail } from './PlayerDetail'
 import { ScoreInputModal } from './ScoreInputModal'
 import { Bar } from 'react-chartjs-2'
@@ -23,11 +23,14 @@ interface ScoreboardProps {
     players: Player[]
     onReset: () => void
     onAddScore: (playerId: number, points: number, scoreType: ScoreType) => void
+    onAddBonus: (playerId: number, points: number, bonusType: BonusType) => void
     onUpdatePlayerName: (playerId: number, newName: string) => void
     onShowHistory: () => void
+    onApplyEndgameBonus: () => void
+    endgameApplied: boolean
 }
 
-export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, onShowHistory }: ScoreboardProps) {
+export function Scoreboard({ players, onReset, onAddScore, onAddBonus, onUpdatePlayerName, onShowHistory, onApplyEndgameBonus, endgameApplied }: ScoreboardProps) {
 
     // 被選中的玩家 ID 狀態（用於查看明細）
     const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
@@ -35,6 +38,8 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
     const [inputPlayerId, setInputPlayerId] = useState<number | null>(null)
     // 控制是否顯示重設確認彈窗
     const [showResetConfirm, setShowResetConfirm] = useState(false)
+    // 控制是否顯示終局結算確認彈窗
+    const [showEndgameConfirm, setShowEndgameConfirm] = useState(false)
 
     // 找出被選中的玩家（查看明細）
     const selectedPlayer = selectedPlayerId
@@ -56,6 +61,18 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
         setShowResetConfirm(false)
         onReset()
     }, [onReset])
+
+    // 開啟終局結算確認
+    const handleEndgameClick = useCallback(() => {
+        if (endgameApplied) return
+        setShowEndgameConfirm(true)
+    }, [endgameApplied])
+
+    // 確認終局結算
+    const handleConfirmEndgame = useCallback(() => {
+        setShowEndgameConfirm(false)
+        onApplyEndgameBonus()
+    }, [onApplyEndgameBonus])
 
     // 準備長條圖資料
     const chartData = {
@@ -134,6 +151,14 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
                     ↻
                 </button>
                 <button
+                    onClick={handleEndgameClick}
+                    className={`rounded-lg p-2 m-1 text-white text-2xl ${endgameApplied ? 'bg-gray-500 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-500'}`}
+                    title={endgameApplied ? '已結算終局' : '終局結算'}
+                    disabled={endgameApplied}
+                >
+                    🏁
+                </button>
+                <button
                     onClick={onShowHistory}
                     className="rounded-lg p-2 m-1 text-white bg-gray-600 text-2xl"
                     title="紀錄"
@@ -167,7 +192,7 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
                             </button>
                             <button
                                 onClick={() => setInputPlayerId(p.id)}
-                                className="rounded-lg p-3 bg-green-600 hover:bg-green-500 text-white text-xl transition"
+                                className="rounded-lg p-3 bg-gray-800 hover:bg-green-500 text-white text-xl transition"
                                 title="輸入分數"
                             >
                                 ➕
@@ -210,12 +235,37 @@ export function Scoreboard({ players, onReset, onAddScore, onUpdatePlayerName, o
                 </div>
             )}
 
+            {/* 終局結算確認彈窗 */}
+            {showEndgameConfirm && (
+                <div className="fixed inset-0 bg-white/25 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 rounded-lg p-6 max-w-sm mx-4">
+                        <h3 className="text-white text-lg font-bold mb-4">確認終局結算？</h3>
+                        <p className="text-gray-300 mb-6">將為酒桶、麥穗、布匹最高者加 10 分，此操作無法撤銷。</p>
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={handleConfirmEndgame}
+                                className="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                            >
+                                確認結算
+                            </button>
+                            <button
+                                onClick={() => setShowEndgameConfirm(false)}
+                                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                            >
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* 分數輸入彈窗 */}
             {inputPlayer && (
                 <ScoreInputModal
                     player={inputPlayer}
                     onClose={() => setInputPlayerId(null)}
                     onAddScore={onAddScore}
+                    onAddBonus={onAddBonus}
                 />
             )}
         </div>

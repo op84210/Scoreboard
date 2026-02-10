@@ -3,6 +3,7 @@ import { type Player } from '../types'
 import { PlayerHeader } from './PlayerDetail/PlayerHeader'
 import { PlayerScore } from './PlayerDetail/PlayerScore'
 import { ScoreBreakdown } from './PlayerDetail/ScoreBreakdown'
+import { BonusBreakdown } from './PlayerDetail/BonusBreakdown'
 import { PLAYER_BG_COLORS } from '../constants/colors'
 
 // 玩家細節元件屬性
@@ -26,6 +27,7 @@ export function PlayerDetail({ player, onClose, onUpdatePlayerName }: PlayerDeta
 
   // 根據玩家顏色設定背景色
   const bgColor = PLAYER_BG_COLORS[player.color] || 'rgb(23 23 23)'
+  const breakdownTotal = Object.values(player.scoreBreakdown).reduce((sum, value) => sum + value, 0)
 
   return (
     <div
@@ -39,23 +41,24 @@ export function PlayerDetail({ player, onClose, onUpdatePlayerName }: PlayerDeta
         style={{ backgroundColor: bgColor }}
         onClick={(e) => e.stopPropagation()}
       >
-     
-          <div className="flex flex-col justify-evenly h-full animate-fade-in">
-            <PlayerHeader
-              playerName={player.name}
-              onClose={handleClose}
-              onNameChange={(newName) => onUpdatePlayerName?.(player.id, newName)}
-            />
-            <PlayerScore score={player.score} />
-            <ScoreBreakdown breakdown={player.scoreBreakdown} totalScore={player.score} />
-                  <button
-              onClick={handleClose}
-              className="btn-gray w-full"
-            >
-              返回主畫面
-            </button>
-          </div>
-              
+
+        <div className="flex flex-col justify-evenly h-full animate-fade-in">
+          <PlayerHeader
+            playerName={player.name}
+            onClose={handleClose}
+            onNameChange={(newName) => onUpdatePlayerName?.(player.id, newName)}
+          />
+          <PlayerScore score={player.score} />
+          <ScoreBreakdown breakdown={player.scoreBreakdown} totalScore={breakdownTotal} />
+          <BonusBreakdown breakdown={player.bonusBreakdown} />
+          <button
+            onClick={handleClose}
+            className="btn-gray w-full"
+          >
+            返回主畫面
+          </button>
+        </div>
+
       </div>
     </div>
   )
