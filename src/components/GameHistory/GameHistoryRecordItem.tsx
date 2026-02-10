@@ -71,7 +71,6 @@ export function GameHistoryRecordItem({
           className={styles.swipeHint}
           style={{ opacity: Math.min(Math.abs(offsetX) / swipeThreshold, 1) }}
         >
-          刪除
         </div>
       )}
     </div>
