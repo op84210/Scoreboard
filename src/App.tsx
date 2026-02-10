@@ -51,14 +51,16 @@ const loadStoredState = (): StoredState | null => {
           normalizeScoreBreakdown(player.scoreBreakdown),
           player.endgameBonus ?? 0,
         ),
-        scoreHistory: (player.scoreHistory ?? []).map((record) =>
-          'recordType' in record
-            ? record
-            : {
-                ...record,
-                recordType: 'score',
-              },
-        ),
+        scoreHistory: (Array.isArray(player.scoreHistory) ? player.scoreHistory : []).map((record) => {
+          if (record && typeof record === 'object' && 'recordType' in record) {
+            return record as ScoreRecord
+          }
+
+          return {
+            ...(record as Omit<ScoreRecord, 'recordType'>),
+            recordType: 'score',
+          } as ScoreRecord
+        }),
       })),
     }
   } catch {
