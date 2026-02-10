@@ -1,5 +1,5 @@
-import { type ScoreBreakdown as ScoreBreakdownType, type ScoreType, SCORE_TYPE_ICONS, SCORE_TYPE_LABELS } from '../../types'
-import { cardStyles, layoutStyles, textStyles } from '../styles'
+import { type ScoreBreakdown as ScoreBreakdownType, type ScoreType, SCORE_TYPE_ICONS, SCORE_TYPE_LABELS } from '../../../types'
+import { cardStyles, layoutStyles, textStyles } from '../../styles'
 import { Pie } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -23,22 +23,21 @@ interface ScoreBreakdownProps {
   totalScore: number
 }
 
-// 得分明細元件
+// 得分明細元件，使用圓餅圖展示不同得分類型的分數佔比
 export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
   const scoreTypes = Object.keys(breakdown) as ScoreType[]
   const scores = scoreTypes.map((type) => breakdown[type])
   const labels = scoreTypes.map((type) => `${SCORE_TYPE_ICONS[type]} ${SCORE_TYPE_LABELS[type]}`)
 
-  // 色板定義
   const colors = [
-    'rgb(239 68 68)',    // red
-    'rgb(59 130 246)',   // blue
-    'rgb(34 197 94)',    // green
-    'rgb(234 179 8)',    // yellow
-    'rgb(107 114 128)',  // gray
-    'rgb(236 72 153)',   // pink
-    'rgb(168 85 247)',   // purple
-    'rgb(20 184 166)',   // teal
+    'rgb(239 68 68)',
+    'rgb(59 130 246)',
+    'rgb(34 197 94)',
+    'rgb(234 179 8)',
+    'rgb(107 114 128)',
+    'rgb(236 72 153)',
+    'rgb(168 85 247)',
+    'rgb(20 184 166)',
   ]
 
   const chartData = {
@@ -47,7 +46,7 @@ export function ScoreBreakdown({ breakdown, totalScore }: ScoreBreakdownProps) {
       {
         data: scores,
         backgroundColor: colors.slice(0, scoreTypes.length),
-        borderColor: 'rgb(31 41 55)', // gray-900
+        borderColor: 'rgb(31 41 55)',
         borderWidth: 2,
       },
     ],

@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import { type ScoreType, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../../types'
-import { layoutStyles, textStyles } from '../styles'
+import { type ScoreType, SCORE_TYPE_LABELS, SCORE_TYPE_ICONS } from '../../../types'
+import { layoutStyles, textStyles } from '../../styles'
 
 const styles = {
   title: textStyles.titleSm,
@@ -16,7 +16,7 @@ interface ScoreTypeSelectorProps {
   onSelectScoreType: (type: ScoreType) => void
 }
 
-// 得分類型選擇器
+// 得分類型選擇元件，允許用戶選擇一種得分類型
 export function ScoreTypeSelector({ selectedScoreType, onSelectScoreType }: ScoreTypeSelectorProps) {
   return (
     <>
@@ -47,6 +47,7 @@ interface CreateScoreTypeButtonProps {
   onSelectScoreType: (type: ScoreType) => void
 }
 
+// 創建得分類型按鈕，根據是否被選中來改變樣式
 function CreateScoreTypeButton({ scoreType, selectedScoreType, onSelectScoreType }: CreateScoreTypeButtonProps) {
   const isSelected = selectedScoreType === scoreType
 

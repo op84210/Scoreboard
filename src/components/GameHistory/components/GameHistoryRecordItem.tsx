@@ -1,7 +1,7 @@
 import { type TouchEvent } from 'react'
 import clsx from 'clsx'
-import { type HistoryRecord, type RecordDisplay } from './utils'
-import { gameHistoryStyles as styles } from './styles'
+import { type HistoryRecord, type RecordDisplay } from '../utils'
+import { gameHistoryStyles as styles } from '../styles'
 
 interface GameHistoryRecordItemProps {
   record: HistoryRecord
@@ -10,12 +10,12 @@ interface GameHistoryRecordItemProps {
   isLatest: boolean
   isActive: boolean
   offsetX: number
-  swipeThreshold: number
   onTouchStart: (recordId: string) => (event: TouchEvent<HTMLDivElement>) => void
   onTouchMove: (recordId: string) => (event: TouchEvent<HTMLDivElement>) => void
   onTouchEnd: (recordId: string) => () => void
 }
 
+// 遊戲歷史記錄項目組件
 export function GameHistoryRecordItem({
   record,
   display,
@@ -23,7 +23,6 @@ export function GameHistoryRecordItem({
   isLatest,
   isActive,
   offsetX,
-  swipeThreshold,
   onTouchStart,
   onTouchMove,
   onTouchEnd,
@@ -65,14 +64,6 @@ export function GameHistoryRecordItem({
           </div>
         )}
       </div>
-
-      {isLatest && (
-        <div
-          className={styles.swipeHint}
-          style={{ opacity: Math.min(Math.abs(offsetX) / swipeThreshold, 1) }}
-        >
-        </div>
-      )}
     </div>
   )
 }

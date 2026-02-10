@@ -1,5 +1,5 @@
-import { type BonusBreakdown as BonusBreakdownType, type BonusType, BONUS_TYPE_ICONS, BONUS_TYPE_LABELS } from '../../types'
-import { cardStyles, layoutStyles, textStyles } from '../styles'
+import { type BonusBreakdown as BonusBreakdownType, type BonusType, BONUS_TYPE_ICONS, BONUS_TYPE_LABELS } from '../../../types'
+import { cardStyles, layoutStyles, textStyles } from '../../styles'
 
 const styles = {
   card: cardStyles.sectionSm,
@@ -15,6 +15,7 @@ interface BonusBreakdownProps {
   breakdown: BonusBreakdownType
 }
 
+// 顯示玩家獎勵點數的組件
 export function BonusBreakdown({ breakdown }: BonusBreakdownProps) {
   const bonusTypes = Object.keys(breakdown) as BonusType[]
 

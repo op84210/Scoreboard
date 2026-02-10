@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 import clsx from 'clsx'
 import { type BonusType, type Player, type ScoreType } from '../types'
-import { ScoreTypeSelector } from './PlayerDetail/ScoreTypeSelector'
-import { BonusTypeSelector } from './PlayerDetail/BonusTypeSelector'
-import { ScoreInputPanel } from './PlayerDetail/ScoreInputPanel'
+import { ScoreTypeSelector } from './PlayerDetail/components/ScoreTypeSelector'
+import { BonusTypeSelector } from './PlayerDetail/components/BonusTypeSelector'
+import { ScoreInputPanel } from './PlayerDetail/components/ScoreInputPanel'
 import { PLAYER_BG_COLORS } from '../constants/colors'
 import { buttonStyles, sheetStyles, textStyles } from './styles'
 
@@ -24,6 +24,7 @@ interface ScoreInputModalProps {
 
 // 分數輸入彈窗元件
 export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: ScoreInputModalProps) {
+  
   // 選擇的得分類型狀態
   const [selectedScoreType, setSelectedScoreType] = useState<ScoreType | null>(null)
   // 選擇的獎勵類型狀態

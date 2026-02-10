@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import { type BonusType, BONUS_TYPE_LABELS, BONUS_TYPE_ICONS } from '../../types'
-import { layoutStyles, textStyles } from '../styles'
+import { type BonusType, BONUS_TYPE_LABELS, BONUS_TYPE_ICONS } from '../../../types'
+import { layoutStyles, textStyles } from '../../styles'
 
 const styles = {
   title: textStyles.titleSm,
@@ -16,6 +16,7 @@ interface BonusTypeSelectorProps {
   onSelectBonusType: (type: BonusType) => void
 }
 
+// 獎勵類型選擇元件，允許用戶選擇一種獎勵類型
 export function BonusTypeSelector({ selectedBonusType, onSelectBonusType }: BonusTypeSelectorProps) {
   return (
     <>
@@ -46,6 +47,7 @@ interface CreateBonusTypeButtonProps {
   onSelectBonusType: (type: BonusType) => void
 }
 
+// 創建獎勵類型按鈕，根據是否被選中來改變樣式
 function CreateBonusTypeButton({ bonusType, selectedBonusType, onSelectBonusType }: CreateBonusTypeButtonProps) {
   const isSelected = selectedBonusType === bonusType
 

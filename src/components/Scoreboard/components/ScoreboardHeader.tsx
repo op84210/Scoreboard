@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { scoreboardStyles as styles } from './styles'
+import { scoreboardStyles as styles } from '../styles'
 
 interface ScoreboardHeaderProps {
   endgameApplied: boolean
@@ -8,6 +8,7 @@ interface ScoreboardHeaderProps {
   onShowHistory: () => void
 }
 
+// 計分板頭部元件，包含重設、終局結算和查看紀錄的按鈕
 export function ScoreboardHeader({
   endgameApplied,
   onReset,

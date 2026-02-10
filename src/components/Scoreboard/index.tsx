@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 import { type BonusType, type Player, type ScoreType } from '../../types'
 import { scoreboardStyles as styles } from './styles'
-import { ScoreboardHeader } from './ScoreboardHeader'
-import { ScoreboardChart } from './ScoreboardChart'
-import { ScoreboardPlayerList } from './ScoreboardPlayerList'
-import { ScoreboardModals } from './ScoreboardModals'
+import { ScoreboardHeader } from './components/ScoreboardHeader'
+import { ScoreboardChart } from './components/ScoreboardChart'
+import { ScoreboardPlayerList } from './components/ScoreboardPlayerList'
+import { ScoreboardModals } from './components/ScoreboardModals'
 
 interface ScoreboardProps {
   players: Player[]
@@ -17,6 +17,7 @@ interface ScoreboardProps {
   endgameApplied: boolean
 }
 
+// 主計分板元件，負責整合頭部、圖表、玩家列表和各種彈窗，並處理相關的狀態和事件
 export function Scoreboard({
   players,
   onReset,

@@ -23,5 +23,4 @@ export const gameHistoryStyles = {
   scorePositive: textStyles.statusPositive,
   scoreNegative: textStyles.statusNegative,
   swipeOverlay: 'absolute inset-0 rounded-lg pointer-events-none',
-  swipeHint: clsx('absolute right-3 text-xs', textStyles.statusDangerHint),
 } as const

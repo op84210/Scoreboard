@@ -1,9 +1,9 @@
 import { type TouchEvent, useRef, useState } from 'react'
 import { type Player } from '../../types'
 import { gameHistoryStyles as styles } from './styles'
-import { buildHistoryRecords, getRecordDisplay } from './utils'
-import { GameHistoryHeader } from './GameHistoryHeader'
-import { GameHistoryRecordItem } from './GameHistoryRecordItem'
+import { buildHistoryRecords, getRecordDisplay, SWIPE_DELETE_THRESHOLD } from './utils'
+import { GameHistoryHeader } from './components/GameHistoryHeader'
+import { GameHistoryRecordItem } from './components/GameHistoryRecordItem'
 
 interface GameHistoryProps {
   players: Player[]
@@ -11,6 +11,7 @@ interface GameHistoryProps {
   onDeleteLatest: () => void
 }
 
+// 遊戲歷史記錄組件
 export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProps) {
   const [activeSwipeId, setActiveSwipeId] = useState<string | null>(null)
   const [swipeOffset, setSwipeOffset] = useState(0)
@@ -19,8 +20,9 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
   const records = buildHistoryRecords(players)
   const hasRecords = records.length > 0
   const latestRecordId = hasRecords ? records[0].id : null
-  const swipeThreshold = 80
+  const swipeThreshold = SWIPE_DELETE_THRESHOLD
 
+  // 處理觸控開始事件
   const handleTouchStart = (recordId: string) => (event: TouchEvent<HTMLDivElement>) => {
     if (recordId !== latestRecordId) return
     touchStartX.current = event.touches[0]?.clientX ?? null
@@ -28,6 +30,7 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
     setSwipeOffset(0)
   }
 
+  // 處理觸控移動事件
   const handleTouchMove = (recordId: string) => (event: TouchEvent<HTMLDivElement>) => {
     if (recordId !== latestRecordId) return
     if (touchStartX.current === null) return
@@ -35,6 +38,7 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
     setSwipeOffset(currentX - touchStartX.current)
   }
 
+  // 處理觸控結束事件
   const handleTouchEnd = (recordId: string) => () => {
     if (recordId !== latestRecordId) return
     const shouldDelete = Math.abs(swipeOffset) >= swipeThreshold
@@ -78,7 +82,6 @@ export function GameHistory({ players, onBack, onDeleteLatest }: GameHistoryProp
                   isLatest={isLatest}
                   isActive={isActive}
                   offsetX={swipeOffset}
-                  swipeThreshold={swipeThreshold}
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}

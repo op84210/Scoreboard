@@ -1,8 +1,8 @@
-import { type BonusType, type Player, type ScoreType } from '../../types'
-import { PlayerDetail } from '../PlayerDetail'
-import { ScoreInputModal } from '../ScoreInputModal'
-import { scoreboardStyles as styles } from './styles'
-import { ScoreboardConfirmModal } from './ScoreboardConfirmModal.tsx'
+import { type BonusType, type Player, type ScoreType } from '../../../types'
+import { PlayerDetail } from '../../PlayerDetail'
+import { ScoreInputModal } from '../../ScoreInputModal'
+import { ConfirmModal } from '../../common/ConfirmModal'
+import { scoreboardStyles as styles } from '../styles'
 
 interface ScoreboardModalsProps {
   selectedPlayer: Player | null
@@ -20,6 +20,7 @@ interface ScoreboardModalsProps {
   onCancelEndgame: () => void
 }
 
+// 負責管理和渲染所有與玩家詳情、分數輸入、重設確認和終局結算確認相關的彈窗
 export function ScoreboardModals({
   selectedPlayer,
   inputPlayer,
@@ -45,7 +46,7 @@ export function ScoreboardModals({
         />
       )}
 
-      <ScoreboardConfirmModal
+      <ConfirmModal
         isOpen={showResetConfirm}
         title="確認重設？"
         body="所有玩家的分數將被清除，此操作無法撤銷。"
@@ -57,7 +58,7 @@ export function ScoreboardModals({
         onCancel={onCancelReset}
       />
 
-      <ScoreboardConfirmModal
+      <ConfirmModal
         isOpen={showEndgameConfirm}
         title="確認終局結算？"
         body="將為酒桶、麥穗、布匹最高者加 10 分，此操作無法撤銷。"

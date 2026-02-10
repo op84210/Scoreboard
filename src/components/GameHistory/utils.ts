@@ -12,6 +12,10 @@ export type RecordDisplay = {
   icon: string
 }
 
+// 刪除記錄的滑動閾值（像素）
+export const SWIPE_DELETE_THRESHOLD = 80
+
+// 建立歷史記錄列表，將所有玩家的得分紀錄合併並排序
 export const buildHistoryRecords = (players: Player[]): HistoryRecord[] => {
   const records: HistoryRecord[] = []
 
@@ -30,6 +34,7 @@ export const buildHistoryRecords = (players: Player[]): HistoryRecord[] => {
   return records
 }
 
+// 根據得分紀錄類型返回對應的顯示資訊（標籤和圖示）
 export const getRecordDisplay = (record: ScoreRecord): RecordDisplay => {
   if (record.recordType === 'score') {
     return {

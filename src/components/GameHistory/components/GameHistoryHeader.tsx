@@ -1,10 +1,11 @@
-import { gameHistoryStyles as styles } from './styles'
+import { gameHistoryStyles as styles } from '../styles'
 
 interface GameHistoryHeaderProps {
   title: string
   onBack: () => void
 }
 
+// 遊戲歷史記錄標題組件
 export function GameHistoryHeader({ title, onBack }: GameHistoryHeaderProps) {
   return (
     <div className={styles.header}>

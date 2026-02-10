@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import clsx from 'clsx'
-import { layoutStyles } from '../styles'
+import { layoutStyles } from '../../styles'
 
 const styles = {
   quickGrid: 'grid grid-cols-4 gap-2',
@@ -16,11 +16,10 @@ interface ScoreInputPanelProps {
   confirmDisabled?: boolean
 }
 
+// 得分輸入面板，提供快速調整分數的按鈕和自定義分數輸入框
 export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: ScoreInputPanelProps) {
-  // 自定義分數輸入狀態
   const [customScore, setCustomScore] = useState('')
 
-  // 快速按鈕：僅累加到輸入框，不立即提交
   const handleAdjustScore = useCallback((delta: number) => {
     const base = parseInt(customScore)
     const current = isNaN(base) ? 0 : base
@@ -32,7 +31,6 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
     setCustomScore(String(next))
   }, [customScore])
 
-  // 確定：提交輸入框的值
   const handleConfirm = useCallback(() => {
     const points = parseInt(customScore)
     if (!isNaN(points) && points !== 0) {
@@ -43,7 +41,6 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
 
   return (
     <>
-      {/* 快速加分按鈕 */}
       <div className={styles.quickGrid}>
         {[1, 3, 5, 10, -1, -3, -5, -10].map((points) => (
           <button
@@ -56,7 +53,6 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
         ))}
       </div>
 
-      {/* 自定義得分輸入 */}
       <div className={styles.inputRow}>
         <input
           type="number"

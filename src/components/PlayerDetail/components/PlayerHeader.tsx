@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import clsx from 'clsx'
-import { buttonStyles, layoutStyles, textStyles } from '../styles'
+import { buttonStyles, layoutStyles, textStyles } from '../../styles'
 
 const styles = {
   container: layoutStyles.rowBetween,
@@ -18,21 +18,17 @@ interface PlayerHeaderProps {
   onNameChange?: (newName: string) => void
 }
 
+// 玩家詳情頁頭部元件，顯示玩家名稱並提供修改和關閉功能
 export function PlayerHeader({ playerName, onClose, onNameChange }: PlayerHeaderProps) {
-
-  // 編輯名稱狀態
   const [isEditing, setIsEditing] = useState(false)
-
-  // 編輯中的名稱狀態
   const [editName, setEditName] = useState(playerName)
 
-  // 處理儲存名稱變更
+  // 保存名字修改
   const handleSaveName = useCallback(() => {
     const trimmedName = editName.trim()
     if (trimmedName !== '' && trimmedName !== playerName) {
       onNameChange?.(trimmedName)
     } else {
-      // 如果為空或未變更，恢復原名
       setEditName(playerName)
     }
     setIsEditing(false)

@@ -1,6 +1,6 @@
 import { modalStyles } from '../styles'
 
-interface ScoreboardConfirmModalProps {
+interface ConfirmModalProps {
   isOpen: boolean
   title: string
   body: string
@@ -12,7 +12,8 @@ interface ScoreboardConfirmModalProps {
   onCancel: () => void
 }
 
-export function ScoreboardConfirmModal({
+// 通用確認對話框組件
+export function ConfirmModal({
   isOpen,
   title,
   body,
@@ -22,7 +23,7 @@ export function ScoreboardConfirmModal({
   cancelClassName,
   onConfirm,
   onCancel,
-}: ScoreboardConfirmModalProps) {
+}: ConfirmModalProps) {
   if (!isOpen) return null
 
   return (

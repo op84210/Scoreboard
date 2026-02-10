@@ -21,6 +21,7 @@ interface ColorSelectionProps {
     onBack: () => void
 }
 
+// 顏色選擇元件，允許用戶為每位玩家選擇一種顏色，並在完成後開始遊戲或返回上一步
 export function ColorSelection({ playerCount, onColorsSelected, onBack }: ColorSelectionProps) {
     // 可選顏色列表
     const availableColors = Object.entries(PLAYER_COLORS).map(([key]) => key as PlayerColor)

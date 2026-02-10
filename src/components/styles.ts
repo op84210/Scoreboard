@@ -51,7 +51,6 @@ export const textStyles = {
   bold: 'font-bold',
   statusPositive: 'text-green-400',
   statusNegative: 'text-red-400',
-  statusDangerHint: 'text-red-300',
 } as const
 
 export const layoutStyles = {

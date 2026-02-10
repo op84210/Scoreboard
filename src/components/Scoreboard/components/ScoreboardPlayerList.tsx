@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import { type Player } from '../../types'
-import { scoreboardStyles as styles } from './styles'
+import { type Player } from '../../../types'
+import { scoreboardStyles as styles } from '../styles'
 
 interface ScoreboardPlayerListProps {
   players: Player[]
@@ -8,6 +8,7 @@ interface ScoreboardPlayerListProps {
   onInputScore: (playerId: number) => void
 }
 
+// 玩家列表元件，展示所有玩家的名稱和分數，並提供查看詳情和輸入分數的按鈕
 export function ScoreboardPlayerList({
   players,
   onSelectPlayer,
