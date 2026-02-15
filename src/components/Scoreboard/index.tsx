@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { type BonusType, type Player, type ScoreType } from '../../types'
 import { scoreboardStyles as styles } from './styles'
 import { ScoreboardHeader } from './components/ScoreboardHeader'
+import { ScoreboardBonusLeaders } from './components/ScoreboardBonusLeaders'
 import { ScoreboardChart } from './components/ScoreboardChart'
 import { ScoreboardPlayerList } from './components/ScoreboardPlayerList'
 import { ScoreboardModals } from './components/ScoreboardModals'
@@ -68,6 +69,8 @@ export function Scoreboard({
         onEndgame={handleEndgameClick}
         onShowHistory={onShowHistory}
       />
+
+      <ScoreboardBonusLeaders players={players} />
 
       <ScoreboardChart players={players} />
 
