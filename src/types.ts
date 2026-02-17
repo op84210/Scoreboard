@@ -82,13 +82,13 @@ export const SCORE_TYPE_ICONS: Record<ScoreType, string> = {
 
 // 獎勵類型標籤與圖示
 export const BONUS_TYPE_LABELS: Record<BonusType, string> = {
-  barrel: '酒桶',
-  wheat: '麥穗',
-  cloth: '布匹',
+  barrel: '桶子',
+  wheat: '小麥',
+  cloth: '絲巾',
 }
 
 export const BONUS_TYPE_ICONS: Record<BonusType, string> = {
-  barrel: '🍷',
+  barrel: '🛢️',
   wheat: '🌾',
-  cloth: '👗',
+  cloth: '🧣',
 }

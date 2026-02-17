@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { layoutStyles } from '../../styles'
 
 const styles = {
-  quickGrid: 'grid grid-cols-4 gap-2',
+  quickGrid: 'grid grid-cols-5 gap-2',
   positiveButton: 'btn-score-positive',
   negativeButton: 'btn-score-negative',
   inputRow: layoutStyles.inputRow,
@@ -42,7 +42,7 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
   return (
     <>
       <div className={styles.quickGrid}>
-        {[1, 3, 5, 10, -1, -3, -5, -10].map((points) => (
+        {[1, 3, 5, 10, -1].map((points) => (
           <button
             key={points}
             onClick={() => handleAdjustScore(points)}

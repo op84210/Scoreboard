@@ -25,7 +25,7 @@ export function ScoreboardChart({ players }: ScoreboardChartProps) {
 
   return (
     <div className={styles.chartCard}>
-      <div style={{ height: '250px' }}>
+      <div style={{ height: '60vh' }}>
         <Bar data={chartData} options={chartOptions} />
       </div>
     </div>

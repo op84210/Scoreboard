@@ -8,7 +8,7 @@ export const scoreboardStyles = {
   iconButtonAmber: buttonStyles.iconAmber,
   iconButtonDisabled: buttonStyles.iconDisabled,
   chartCard: cardStyles.sectionMd,
-  playerList: layoutStyles.listY2,
+  playerList: 'flex flex-col md:flex-row gap-2 md:gap-3',
   playerRow: layoutStyles.rowGap2,
   playerButton: 'flex-1 rounded-lg p-3',
   playerScoreRow: layoutStyles.rowBetween,

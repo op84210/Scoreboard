@@ -29,6 +29,8 @@ export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: Sco
   const [selectedScoreType, setSelectedScoreType] = useState<ScoreType | null>(null)
   // 選擇的獎勵類型狀態
   const [selectedBonusType, setSelectedBonusType] = useState<BonusType | null>(null)
+  // 控制選擇器 Tab（得分或獎勵）
+  const [selectorTab, setSelectorTab] = useState<'score' | 'bonus'>('score')
   // 控制關閉動畫
   const [isClosing, setIsClosing] = useState(false)
 
@@ -81,30 +83,54 @@ export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: Sco
             </button>
           </div>
 
-          <ScoreTypeSelector
-            selectedScoreType={selectedScoreType}
-            onSelectScoreType={(type) => {
-              setSelectedScoreType(type)
-              setSelectedBonusType(null)
-            }}
-          />
-          <BonusTypeSelector
-            selectedBonusType={selectedBonusType}
-            onSelectBonusType={(type) => {
-              setSelectedBonusType(type)
-              setSelectedScoreType(null)
-            }}
-          />
+          {/* 選擇器 Tab 切換 */}
+          <div className="flex gap-2 mb-4 border-b border-gray-600">
+            <button
+              onClick={() => setSelectorTab('score')}
+              className={clsx(
+                'flex-1 py-2 px-4 text-sm font-medium transition',
+                selectorTab === 'score'
+                  ? 'border-b-2 border-white text-white'
+                  : 'text-gray-400 hover:text-gray-300'
+              )}
+            >
+              得分類型
+            </button>
+            <button
+              onClick={() => setSelectorTab('bonus')}
+              className={clsx(
+                'flex-1 py-2 px-4 text-sm font-medium transition',
+                selectorTab === 'bonus'
+                  ? 'border-b-2 border-white text-white'
+                  : 'text-gray-400 hover:text-gray-300'
+              )}
+            >
+              獎勵類型
+            </button>
+          </div>
+
+          {/* 根據選擇的 Tab 顯示對應的選擇器 */}
+          {selectorTab === 'score' ? (
+            <ScoreTypeSelector
+              selectedScoreType={selectedScoreType}
+              onSelectScoreType={(type) => {
+                setSelectedScoreType(type)
+                setSelectedBonusType(null)
+              }}
+            />
+          ) : (
+            <BonusTypeSelector
+              selectedBonusType={selectedBonusType}
+              onSelectBonusType={(type) => {
+                setSelectedBonusType(type)
+                setSelectedScoreType(null)
+              }}
+            />
+          )}
           <ScoreInputPanel
             onConfirmScore={handleConfirmScore}
             confirmDisabled={selectedScoreType === null && selectedBonusType === null}
           />
-          <button
-            onClick={handleClose}
-            className={styles.returnButton}
-          >
-            返回
-          </button>
         </div>
       </div>
     </div>

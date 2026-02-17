@@ -21,7 +21,8 @@ interface ScoreboardBonusLeadersProps {
 const BONUS_TYPES: BonusType[] = ['barrel', 'wheat', 'cloth']
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
-ChartJS.defaults.font.size = 16
+ChartJS.defaults.font.size = 18
+ChartJS.defaults.font.family = 'system-ui, -apple-system, sans-serif'
 
 export function ScoreboardBonusLeaders({ players }: ScoreboardBonusLeadersProps) {
   const [activeBonusType, setActiveBonusType] = useState<BonusType | null>(null)
@@ -75,23 +76,25 @@ export function ScoreboardBonusLeaders({ players }: ScoreboardBonusLeadersProps)
           display: true,
           text: `${BONUS_TYPE_ICONS[activeBonusType]} ${BONUS_TYPE_LABELS[activeBonusType]} 領先分佈`,
           color: 'white',
-          font: { size: 16, weight: 'bold' },
+          font: { size: 24, weight: 'bold' },
         },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
           titleColor: 'white',
           bodyColor: 'white',
-          padding: 10,
+          padding: 12,
+          titleFont: { size: 24, weight: 'bold' },
+          bodyFont: { size: 20 },
         },
       },
       scales: {
         x: {
           beginAtZero: true,
-          ticks: { color: 'white', font: { size: 12 } },
+          ticks: { color: 'white', font: { size: 24, weight: 'bold' } },
           grid: { color: 'rgba(255, 255, 255, 0.1)' },
         },
         y: {
-          ticks: { color: 'white', font: { size: 12 } },
+          ticks: { color: 'white', font: { size: 24, weight: 'bold' } },
           grid: { display: false },
         },
       },
@@ -101,7 +104,7 @@ export function ScoreboardBonusLeaders({ players }: ScoreboardBonusLeadersProps)
   return (
     <section className={cardStyles.sectionMd}>
       <div className={layoutStyles.rowBetween}>
-        <h2 className={textStyles.titleSm}>獎勵領先</h2>
+        <h1 className={textStyles.titleSm}>獎勵領先</h1>
         <span className={textStyles.mutedSm}>同分並列</span>
       </div>
       <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -132,7 +135,7 @@ export function ScoreboardBonusLeaders({ players }: ScoreboardBonusLeadersProps)
 
       {activeBonusType && (
         <div className={modalStyles.overlay} onClick={() => setActiveBonusType(null)}>
-          <div className={modalStyles.modal} onClick={(event) => event.stopPropagation()}>
+          <div className="bg-gray-900 rounded-lg p-6 w-11/12 h-5/6 max-h-[90vh] flex flex-col" onClick={(event) => event.stopPropagation()}>
             <div className={layoutStyles.rowBetween}>
               <h3 className={modalStyles.title}>獎勵長條圖</h3>
               <button
@@ -143,7 +146,7 @@ export function ScoreboardBonusLeaders({ players }: ScoreboardBonusLeadersProps)
                 ×
               </button>
             </div>
-            <div style={{ height: '260px' }}>
+            <div style={{ flex: 1, minHeight: 0 }}>
               <Bar data={chartData} options={chartOptions} />
             </div>
           </div>

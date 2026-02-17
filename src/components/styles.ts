@@ -10,7 +10,7 @@ export const modalStyles = {
 
 export const sheetStyles = {
   overlay: 'fixed inset-0 bg-black/50 flex items-end justify-center z-50',
-  panel: 'bg-gray-900 rounded-t-3xl p-4 w-full h-full max-w-md overflow-y-auto',
+  panel: 'bg-gray-900 rounded-t-3xl p-4 w-full h-full overflow-y-auto',
   panelOpen: 'animate-slide-up',
   panelClose: 'animate-slide-down',
   content: 'flex flex-col space-y-6 animate-fade-in',
@@ -25,7 +25,7 @@ export const buttonStyles = {
   iconGray: 'bg-gray-600',
   iconAmber: 'bg-amber-600 hover:bg-amber-500',
   iconDisabled: 'bg-gray-500 cursor-not-allowed',
-  addScore: 'rounded-lg p-3 bg-gray-800 hover:bg-green-500 text-white text-xl transition',
+  addScore: 'rounded-lg p-2 bg-gray-800 hover:bg-green-500 text-white text-lg transition',
 } as const
 
 export const cardStyles = {
