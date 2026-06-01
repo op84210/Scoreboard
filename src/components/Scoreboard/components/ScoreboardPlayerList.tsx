@@ -4,28 +4,34 @@ import { scoreboardStyles as styles } from '../styles'
 
 interface ScoreboardPlayerListProps {
   players: Player[]
+  selectedPlayerId: number | null
   onSelectPlayer: (playerId: number) => void
-  onQuickAddScore: (playerId: number, points: number) => void
-  onInputScore: (playerId: number) => void
+  onOpenPlayerDetail: (playerId: number) => void
 }
 
 // 玩家列表元件，展示所有玩家的名稱和分數，並提供查看詳情和輸入分數的按鈕
 export function ScoreboardPlayerList({
   players,
+  selectedPlayerId,
   onSelectPlayer,
-  onQuickAddScore,
-  onInputScore,
+  onOpenPlayerDetail,
 }: ScoreboardPlayerListProps) {
   return (
     <ul className={styles.playerList}>
       {players.map((player) => {
+        const isSelected = selectedPlayerId === player.id
         const colorClass = `btn-${player.color}`
         return (
           <div key={player.id} className={styles.playerRow}>
             <button
+              type="button"
               onClick={() => onSelectPlayer(player.id)}
-              className={clsx(styles.playerButton, colorClass)}
-              title="查看明細"
+              className={clsx(
+                styles.playerButton,
+                colorClass,
+                isSelected ? styles.playerButtonSelected : styles.playerButtonIdle,
+              )}
+              title="選取玩家"
             >
               <div className={styles.playerScoreRow}>
                 <span>{player.name}</span>
@@ -33,25 +39,12 @@ export function ScoreboardPlayerList({
               </div>
             </button>
             <button
-              onClick={() => onQuickAddScore(player.id, 1)}
-              className={styles.quickAddButton}
-              title="快速加 1 分"
+              type="button"
+              onClick={() => onOpenPlayerDetail(player.id)}
+              className={styles.playerDetailButton}
+              title="查看明細"
             >
-              +1
-            </button>
-            <button
-              onClick={() => onQuickAddScore(player.id, 3)}
-              className={styles.quickAddButton}
-              title="快速加 3 分"
-            >
-              +3
-            </button>
-            <button
-              onClick={() => onInputScore(player.id)}
-              className={styles.quickInputButton}
-              title="自訂輸入"
-            >
-              ⋯
+              i
             </button>
           </div>
         )

@@ -4,14 +4,92 @@ import { scoreboardStyles as styles } from './styles'
 import { ScoreboardHeader } from './components/ScoreboardHeader'
 import { ScoreboardBonusLeaders } from './components/ScoreboardBonusLeaders'
 import { ScoreboardChart } from './components/ScoreboardChart'
+import { ScoreboardQuickTypeSelector } from './components/ScoreboardQuickTypeSelector'
 import { ScoreboardPlayerList } from './components/ScoreboardPlayerList'
 import { ScoreboardModals } from './components/ScoreboardModals'
+
+interface ScoreboardBottomDockProps {
+  selectedType: ScoreType
+  onSelectType: (type: ScoreType) => void
+  onAddThree: () => void
+  onAddOne: () => void
+  onMinusOne: () => void
+  onUndo: () => void
+  actionsDisabled: boolean
+  canUndo: boolean
+}
+
+function ScoreboardBottomDock({
+  selectedType,
+  onSelectType,
+  onAddThree,
+  onAddOne,
+  onMinusOne,
+  onUndo,
+  actionsDisabled,
+  canUndo,
+}: ScoreboardBottomDockProps) {
+  const actionDisabledClass = actionsDisabled ? styles.dockActionDisabled : ''
+  const undoDisabledClass = !canUndo ? styles.dockActionDisabled : ''
+
+  return (
+    <div className={styles.bottomDock}>
+      <div className={styles.dockPanel}>
+        <ScoreboardQuickTypeSelector
+          selectedType={selectedType}
+          onSelectType={onSelectType}
+        />
+
+        <div className={styles.dockActions}>
+          <button
+            type="button"
+            onClick={onMinusOne}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionNegative} ${actionDisabledClass}`}
+            title="扣 1 分"
+          >
+            -1
+          </button>
+          <button
+            type="button"
+            onClick={onAddOne}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionPositive} ${actionDisabledClass}`}
+            title="加 1 分"
+          >
+            +1
+          </button>
+          <button
+            type="button"
+            onClick={onAddThree}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionPositive} ${actionDisabledClass}`}
+            title="加 3 分"
+          >
+            +3
+          </button>
+          <button
+            type="button"
+            onClick={onUndo}
+            disabled={!canUndo}
+            className={`${styles.dockActionButton} ${styles.dockActionUndo} ${undoDisabledClass}`}
+            title="復原最近一筆"
+          >
+            Undo
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 interface ScoreboardProps {
   players: Player[]
   onReset: () => void
   onAddScore: (playerId: number, points: number, scoreType: ScoreType) => void
   onAddBonus: (playerId: number, points: number, bonusType: BonusType) => void
+  onUndoLatest: () => void
+  canUndo: boolean
   onUpdatePlayerName: (playerId: number, newName: string) => void
   onShowHistory: () => void
   onApplyEndgameBonus: () => void
@@ -24,23 +102,29 @@ export function Scoreboard({
   onReset,
   onAddScore,
   onAddBonus,
+  onUndoLatest,
+  canUndo,
   onUpdatePlayerName,
   onShowHistory,
   onApplyEndgameBonus,
   endgameApplied,
 }: ScoreboardProps) {
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
-  const [inputPlayerId, setInputPlayerId] = useState<number | null>(null)
+  const [detailPlayerId, setDetailPlayerId] = useState<number | null>(null)
+  const [quickScoreType, setQuickScoreType] = useState<ScoreType>('castle')
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [showEndgameConfirm, setShowEndgameConfirm] = useState(false)
+
+  const detailPlayer = detailPlayerId
+    ? players.find((player) => player.id === detailPlayerId) ?? null
+    : null
 
   const selectedPlayer = selectedPlayerId
     ? players.find((player) => player.id === selectedPlayerId) ?? null
     : null
 
-  const inputPlayer = inputPlayerId
-    ? players.find((player) => player.id === inputPlayerId) ?? null
-    : null
+  const quickActionDisabled = selectedPlayerId === null
+  const selectedTypePoints = selectedPlayer?.scoreBreakdown[quickScoreType] ?? 0
 
   const handleResetClick = useCallback(() => {
     setShowResetConfirm(true)
@@ -61,9 +145,11 @@ export function Scoreboard({
     onApplyEndgameBonus()
   }, [onApplyEndgameBonus])
 
-  const handleQuickAddScore = useCallback((playerId: number, points: number) => {
-    onAddScore(playerId, points, 'castle')
-  }, [onAddScore])
+  const handleQuickScore = useCallback((points: number) => {
+    if (selectedPlayerId === null) return
+    if (points < 0 && selectedTypePoints <= 0) return
+    onAddScore(selectedPlayerId, points, quickScoreType)
+  }, [onAddScore, quickScoreType, selectedPlayerId, selectedTypePoints])
 
   return (
     <div className={styles.container}>
@@ -80,18 +166,29 @@ export function Scoreboard({
 
       <ScoreboardPlayerList
         players={players}
+        selectedPlayerId={selectedPlayerId}
         onSelectPlayer={setSelectedPlayerId}
-        onQuickAddScore={handleQuickAddScore}
-        onInputScore={setInputPlayerId}
+        onOpenPlayerDetail={setDetailPlayerId}
+      />
+
+      <ScoreboardBottomDock
+        selectedType={quickScoreType}
+        onSelectType={setQuickScoreType}
+        onAddThree={() => handleQuickScore(3)}
+        onAddOne={() => handleQuickScore(1)}
+        onMinusOne={() => handleQuickScore(-1)}
+        onUndo={onUndoLatest}
+        actionsDisabled={quickActionDisabled}
+        canUndo={canUndo}
       />
 
       <ScoreboardModals
-        selectedPlayer={selectedPlayer}
-        inputPlayer={inputPlayer}
+        selectedPlayer={detailPlayer}
+        inputPlayer={null}
         showResetConfirm={showResetConfirm}
         showEndgameConfirm={showEndgameConfirm}
-        onClosePlayerDetail={() => setSelectedPlayerId(null)}
-        onCloseScoreInput={() => setInputPlayerId(null)}
+        onClosePlayerDetail={() => setDetailPlayerId(null)}
+        onCloseScoreInput={() => undefined}
         onUpdatePlayerName={onUpdatePlayerName}
         onAddScore={onAddScore}
         onAddBonus={onAddBonus}

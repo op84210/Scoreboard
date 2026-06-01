@@ -383,6 +383,8 @@ function App() {
           onReset={handleReset}
           onAddScore={handleAddScore}
           onAddBonus={handleAddBonus}
+          onUndoLatest={handleDeleteLatestRecord}
+          canUndo={players.some((player) => player.scoreHistory.length > 0)}
           onUpdatePlayerName={handleUpdatePlayerName}
           onShowHistory={handleShowHistory}
           onApplyEndgameBonus={handleApplyEndgameBonus}
