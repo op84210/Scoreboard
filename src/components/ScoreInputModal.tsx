@@ -26,7 +26,7 @@ interface ScoreInputModalProps {
 export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: ScoreInputModalProps) {
   
   // 選擇的得分類型狀態
-  const [selectedScoreType, setSelectedScoreType] = useState<ScoreType | null>(null)
+  const [selectedScoreType, setSelectedScoreType] = useState<ScoreType | null>('castle')
   // 選擇的獎勵類型狀態
   const [selectedBonusType, setSelectedBonusType] = useState<BonusType | null>(null)
   // 控制關閉動畫
@@ -43,7 +43,6 @@ export function ScoreInputModal({ player, onClose, onAddScore, onAddBonus }: Sco
     if (selectedBonusType !== null) {
       onAddBonus(player.id, points, selectedBonusType)
     }
-    handleClose() // 直接關閉彈窗返回主畫面
   }, [onAddBonus, onAddScore, player.id, selectedBonusType, selectedScoreType])
 
   // 處理關閉彈窗

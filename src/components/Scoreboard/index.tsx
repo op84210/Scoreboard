@@ -60,6 +60,10 @@ export function Scoreboard({
     onApplyEndgameBonus()
   }, [onApplyEndgameBonus])
 
+  const handleQuickAddScore = useCallback((playerId: number, points: number) => {
+    onAddScore(playerId, points, 'castle')
+  }, [onAddScore])
+
   return (
     <div className={styles.container}>
       <ScoreboardHeader
@@ -74,6 +78,7 @@ export function Scoreboard({
       <ScoreboardPlayerList
         players={players}
         onSelectPlayer={setSelectedPlayerId}
+        onQuickAddScore={handleQuickAddScore}
         onInputScore={setInputPlayerId}
       />
 

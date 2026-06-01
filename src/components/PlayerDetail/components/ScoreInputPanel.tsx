@@ -20,16 +20,10 @@ interface ScoreInputPanelProps {
 export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: ScoreInputPanelProps) {
   const [customScore, setCustomScore] = useState('')
 
-  const handleAdjustScore = useCallback((delta: number) => {
-    const base = parseInt(customScore)
-    const current = isNaN(base) ? 0 : base
-    const next = current + delta
-    if (next < 0) {
-      setCustomScore('0')
-      return
-    }
-    setCustomScore(String(next))
-  }, [customScore])
+  const handleQuickSubmit = useCallback((points: number) => {
+    if (confirmDisabled || points === 0) return
+    onConfirmScore(points)
+  }, [confirmDisabled, onConfirmScore])
 
   const handleConfirm = useCallback(() => {
     const points = parseInt(customScore)
@@ -45,8 +39,9 @@ export function ScoreInputPanel({ onConfirmScore, confirmDisabled = false }: Sco
         {[1, 3, 5, 10, -1, -3, -5, -10].map((points) => (
           <button
             key={points}
-            onClick={() => handleAdjustScore(points)}
+            onClick={() => handleQuickSubmit(points)}
             className={clsx(points > 0 ? styles.positiveButton : styles.negativeButton)}
+            disabled={confirmDisabled}
           >
             {points > 0 ? '+' + points : points}
           </button>

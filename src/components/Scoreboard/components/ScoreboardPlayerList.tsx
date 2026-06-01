@@ -5,6 +5,7 @@ import { scoreboardStyles as styles } from '../styles'
 interface ScoreboardPlayerListProps {
   players: Player[]
   onSelectPlayer: (playerId: number) => void
+  onQuickAddScore: (playerId: number, points: number) => void
   onInputScore: (playerId: number) => void
 }
 
@@ -12,6 +13,7 @@ interface ScoreboardPlayerListProps {
 export function ScoreboardPlayerList({
   players,
   onSelectPlayer,
+  onQuickAddScore,
   onInputScore,
 }: ScoreboardPlayerListProps) {
   return (
@@ -31,11 +33,25 @@ export function ScoreboardPlayerList({
               </div>
             </button>
             <button
-              onClick={() => onInputScore(player.id)}
-              className={styles.addScoreButton}
-              title="輸入分數"
+              onClick={() => onQuickAddScore(player.id, 1)}
+              className={styles.quickAddButton}
+              title="快速加 1 分"
             >
-              ➕
+              +1
+            </button>
+            <button
+              onClick={() => onQuickAddScore(player.id, 3)}
+              className={styles.quickAddButton}
+              title="快速加 3 分"
+            >
+              +3
+            </button>
+            <button
+              onClick={() => onInputScore(player.id)}
+              className={styles.quickInputButton}
+              title="自訂輸入"
+            >
+              ⋯
             </button>
           </div>
         )
