@@ -74,8 +74,9 @@ function ScoreboardBottomDock({
             disabled={!canUndo}
             className={`${styles.dockActionButton} ${styles.dockActionUndo} ${undoDisabledClass}`}
             title="復原最近一筆"
+            aria-label="復原最近一筆"
           >
-            Undo
+            ↶
           </button>
         </div>
       </div>

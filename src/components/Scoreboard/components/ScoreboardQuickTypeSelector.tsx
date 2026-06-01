@@ -31,10 +31,10 @@ export function ScoreboardQuickTypeSelector({
                 isSelected ? styles.quickTypeButtonActive : styles.quickTypeButtonIdle,
               )}
               title={`快速加分套用 ${SCORE_TYPE_LABELS[type]}`}
+              aria-label={`得分類型：${SCORE_TYPE_LABELS[type]}`}
               aria-pressed={isSelected}
             >
               <span className={styles.quickTypeIcon}>{SCORE_TYPE_ICONS[type]}</span>
-              <span>{SCORE_TYPE_LABELS[type]}</span>
             </button>
           )
         })}
