@@ -53,12 +53,6 @@ export function PlayerDetail({ player, onClose, onUpdatePlayerName }: PlayerDeta
           <PlayerScore score={player.score} />
           <ScoreBreakdown breakdown={player.scoreBreakdown} totalScore={breakdownTotal} />
           <BonusBreakdown breakdown={player.bonusBreakdown} />
-          <button
-            onClick={handleClose}
-            className={styles.returnButton}
-          >
-            返回主畫面
-          </button>
         </div>
       </div>
     </div>

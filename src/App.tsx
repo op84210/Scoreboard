@@ -282,7 +282,7 @@ function App() {
     setEndgameApplied(nextEndgameApplied)
   }, [])
 
-  // 終局結算：酒桶、麥穗、布匹各自最高者 +10
+  // 終局結算：桶子、小麥、絲巾各自最高者 +10
   const handleApplyEndgameBonus = useCallback(() => {
     if (endgameApplied) return
 

@@ -61,7 +61,7 @@ export function ScoreboardModals({
       <ConfirmModal
         isOpen={showEndgameConfirm}
         title="確認終局結算？"
-        body="將為酒桶、麥穗、布匹最高者加 10 分，此操作無法撤銷。"
+        body="將為桶子、小麥、絲巾最高者加 10 分，此操作無法撤銷。"
         confirmLabel="確認結算"
         cancelLabel="取消"
         confirmClassName={styles.modalPrimary}

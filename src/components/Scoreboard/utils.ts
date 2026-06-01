@@ -25,7 +25,7 @@ export const chartOptions: ChartOptions<'bar'> = {
       display: true,
       text: '玩家分數對比',
       color: 'white',
-      font: { size: 16, weight: 'bold' },
+      font: { size: 24, weight: 'bold' },
     },
     tooltip: {
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -37,11 +37,11 @@ export const chartOptions: ChartOptions<'bar'> = {
   scales: {
     x: {
       beginAtZero: true,
-      ticks: { color: 'white', font: { size: 12 } },
+      ticks: { color: 'white', font: { size: 24 } },
       grid: { color: 'rgba(255, 255, 255, 0.1)' },
     },
     y: {
-      ticks: { color: 'white', font: { size: 12 } },
+      ticks: { color: 'white', font: { size: 24 } },
       grid: { display: false },
     },
   },
