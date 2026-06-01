@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { type BonusType, type Player, type ScoreType } from '../../types'
 import { scoreboardStyles as styles } from './styles'
 import { ScoreboardHeader } from './components/ScoreboardHeader'
@@ -11,74 +11,118 @@ import { ScoreboardModals } from './components/ScoreboardModals'
 interface ScoreboardBottomDockProps {
   selectedType: ScoreType
   onSelectType: (type: ScoreType) => void
-  onAddThree: () => void
-  onAddOne: () => void
-  onMinusOne: () => void
+  onSubmitPending: (points: number) => void
   onUndo: () => void
   actionsDisabled: boolean
+  maxDecrement: number
+  contextKey: string
   canUndo: boolean
 }
 
 function ScoreboardBottomDock({
   selectedType,
   onSelectType,
-  onAddThree,
-  onAddOne,
-  onMinusOne,
+  onSubmitPending,
   onUndo,
   actionsDisabled,
+  maxDecrement,
+  contextKey,
   canUndo,
 }: ScoreboardBottomDockProps) {
-  const actionDisabledClass = actionsDisabled ? styles.dockActionDisabled : ''
+  const [pendingPoints, setPendingPoints] = useState(0)
+
   const undoDisabledClass = !canUndo ? styles.dockActionDisabled : ''
+  const pendingDisabled = actionsDisabled || pendingPoints === 0
+
+  useEffect(() => {
+    setPendingPoints(0)
+  }, [contextKey])
+
+  const handleAdjustPending = useCallback((delta: number) => {
+    if (actionsDisabled) return
+    setPendingPoints((prev) => Math.max(-maxDecrement, prev + delta))
+  }, [actionsDisabled, maxDecrement])
+
+  const handleSubmitPending = useCallback(() => {
+    if (pendingDisabled) return
+    onSubmitPending(pendingPoints)
+    setPendingPoints(0)
+  }, [onSubmitPending, pendingDisabled, pendingPoints])
+
+  const pendingLabel = pendingPoints > 0 ? `+${pendingPoints}` : `${pendingPoints}`
 
   return (
     <div className={styles.bottomDock}>
       <div className={styles.dockPanel}>
-        <ScoreboardQuickTypeSelector
-          selectedType={selectedType}
-          onSelectType={onSelectType}
-        />
+        <div className={styles.dockTopRow}>
+          <ScoreboardQuickTypeSelector
+            selectedType={selectedType}
+            onSelectType={onSelectType}
+          />
 
-        <div className={styles.dockActions}>
-          <button
-            type="button"
-            onClick={onMinusOne}
-            disabled={actionsDisabled}
-            className={`${styles.dockActionButton} ${styles.dockActionNegative} ${actionDisabledClass}`}
-            title="扣 1 分"
-          >
-            -1
-          </button>
-          <button
-            type="button"
-            onClick={onAddOne}
-            disabled={actionsDisabled}
-            className={`${styles.dockActionButton} ${styles.dockActionPositive} ${actionDisabledClass}`}
-            title="加 1 分"
-          >
-            +1
-          </button>
-          <button
-            type="button"
-            onClick={onAddThree}
-            disabled={actionsDisabled}
-            className={`${styles.dockActionButton} ${styles.dockActionPositive} ${actionDisabledClass}`}
-            title="加 3 分"
-          >
-            +3
-          </button>
           <button
             type="button"
             onClick={onUndo}
             disabled={!canUndo}
-            className={`${styles.dockActionButton} ${styles.dockActionUndo} ${undoDisabledClass}`}
+            className={`${styles.dockUndoButton} ${styles.dockActionUndo} ${undoDisabledClass}`}
             title="復原最近一筆"
             aria-label="復原最近一筆"
           >
             ↶
           </button>
         </div>
+
+        <div className={styles.dockScoreRow}>
+          <button
+            type="button"
+            onClick={() => handleAdjustPending(-5)}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionNegative} ${actionsDisabled ? styles.dockActionDisabled : ''}`}
+            title="扣 5 分"
+          >
+            -5
+          </button>
+          <button
+            type="button"
+            onClick={() => handleAdjustPending(-1)}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionNegative} ${actionsDisabled ? styles.dockActionDisabled : ''}`}
+            title="扣 1 分"
+          >
+            -1
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSubmitPending}
+            disabled={pendingDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionPending} ${pendingDisabled ? styles.dockActionDisabled : ''}`}
+            title="送出累積分數"
+            aria-label={`送出累積分數 ${pendingLabel}`}
+          >
+            {pendingLabel}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleAdjustPending(1)}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionPositive} ${actionsDisabled ? styles.dockActionDisabled : ''}`}
+            title="加 1 分"
+          >
+            +1
+          </button>
+          <button
+            type="button"
+            onClick={() => handleAdjustPending(5)}
+            disabled={actionsDisabled}
+            className={`${styles.dockActionButton} ${styles.dockActionPositive} ${actionsDisabled ? styles.dockActionDisabled : ''}`}
+            title="加 5 分"
+          >
+            +5
+          </button>
+        </div>
+
       </div>
     </div>
   )
@@ -148,9 +192,13 @@ export function Scoreboard({
 
   const handleQuickScore = useCallback((points: number) => {
     if (selectedPlayerId === null) return
-    if (points < 0 && selectedTypePoints <= 0) return
+    if (points < 0 && selectedTypePoints < Math.abs(points)) return
     onAddScore(selectedPlayerId, points, quickScoreType)
   }, [onAddScore, quickScoreType, selectedPlayerId, selectedTypePoints])
+
+  const handleSubmitPending = useCallback((points: number) => {
+    handleQuickScore(points)
+  }, [handleQuickScore])
 
   return (
     <div className={styles.container}>
@@ -175,11 +223,11 @@ export function Scoreboard({
       <ScoreboardBottomDock
         selectedType={quickScoreType}
         onSelectType={setQuickScoreType}
-        onAddThree={() => handleQuickScore(3)}
-        onAddOne={() => handleQuickScore(1)}
-        onMinusOne={() => handleQuickScore(-1)}
+        onSubmitPending={handleSubmitPending}
         onUndo={onUndoLatest}
         actionsDisabled={quickActionDisabled}
+        maxDecrement={selectedTypePoints}
+        contextKey={`${selectedPlayerId ?? 'none'}-${quickScoreType}`}
         canUndo={canUndo}
       />
 
